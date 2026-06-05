@@ -64,11 +64,20 @@ const rightOpen = ref(false)
 const isMobile = ref(window.innerWidth <= 768)
 
 const leftWidth = computed(() => isMobile.value ? '0px' : '280px')
-const rightWidth = computed(() => isMobile.value ? '0px' : '320px')
+
+// 右侧面板宽度：没有选中实体时为0，选中后根据设备显示宽度
+const rightWidth = computed(() => {
+  if (!selectedEntityId.value) return '0px'
+  return isMobile.value ? '280px' : '320px'
+})
 
 // 清空详情面板
 const handleClearDetail = () => {
   selectedEntityId.value = null
+  // 手机端关闭右侧面板
+  if (isMobile.value) {
+    rightOpen.value = false
+  }
 }
 
 // 选择左侧实体
@@ -81,13 +90,6 @@ const handleSelectEntity = (entityId) => {
 
   if (graphRef.value && graphRef.value.focusNode) {
     graphRef.value.focusNode(entityId)
-  }
-}
-
-// 点击图谱节点（只有电脑端才显示详情）
-const handleNodeClick = (node) => {
-  if (!isMobile.value) {
-    selectedEntityId.value = node.id
   }
 }
 
@@ -156,7 +158,7 @@ onUnmounted(() => {
 .left-aside, .right-aside {
   background-color: #fff;
   border-right: 1px solid #e4e7ed;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
   overflow-y: auto;
 }
 
@@ -191,7 +193,6 @@ onUnmounted(() => {
     right: 0;
     top: 60px;
     bottom: 0;
-    width: 280px !important;
     z-index: 1000;
     background: white;
     box-shadow: -2px 0 8px rgba(0,0,0,0.15);
