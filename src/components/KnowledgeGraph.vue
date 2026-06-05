@@ -28,8 +28,7 @@ const getNodeStyle = (type) => {
   }
 }
 
-// 获取触摸点下的节点（使用模型中的 x, y）
-// 获取触摸点下的节点 - 直接使用节点在 canvas 上的实际渲染位置
+// 获取触摸点下的节点
 const getNodeAtPosition = (clientX, clientY) => {
   if (!graph) return null
 
@@ -40,9 +39,8 @@ const getNodeAtPosition = (clientX, clientY) => {
   const canvasX = clientX - rect.left
   const canvasY = clientY - rect.top
 
-  // 获取所有节点
   const nodes = graph.getNodes()
-  let minDistance = 100  // 扩大容差到 80px
+  let minDistance = 100
   let closestNode = null
 
   for (let i = 0; i < nodes.length; i++) {
@@ -50,7 +48,6 @@ const getNodeAtPosition = (clientX, clientY) => {
     const model = node.getModel()
 
     try {
-      // 使用 G6 自带方法获取节点在屏幕上的位置
       const screenPos = graph.getClientByPoint(model.x, model.y)
       if (screenPos) {
         const dx = canvasX - screenPos.x
@@ -62,19 +59,15 @@ const getNodeAtPosition = (clientX, clientY) => {
           closestNode = node
         }
       }
-    } catch (e) {
-      console.log('getClientByPoint 失败:', model.name)
-    }
+    } catch (e) {}
   }
 
-  // 扩大命中阈值到 60px
   if (closestNode && minDistance < 100) {
     const model = closestNode.getModel()
     console.log('✅ 命中节点:', model.name, '距离:', minDistance.toFixed(2))
     return model
   }
 
-  console.log('❌ 未命中，最近距离:', minDistance.toFixed(2))
   return null
 }
 
@@ -100,6 +93,43 @@ const bindTouchEvents = () => {
   canvas.addEventListener('touchstart', handleTouchStart, { passive: false })
 }
 
+// 聚焦某个节点（居中并高亮）
+const focusNode = (nodeId) => {
+  if (!graph) return
+
+  const node = graph.findById(nodeId)
+  if (!node) return
+
+  // 使用 G6 内置的 focusItem 方法，自动居中
+  try {
+    graph.focusItem(node, true, {
+      easing: 'easeCubic',
+      duration: 500,
+      animate: true
+    })
+  } catch (e) {
+    console.log('focusItem 失败，尝试手动聚焦')
+    // 备选方案：获取节点位置手动移动
+    const model = node.getModel()
+    const width = graph.getWidth()
+    const height = graph.getHeight()
+    graph.moveTo(width / 2 - model.x, height / 2 - model.y)
+  }
+
+  // 高亮节点
+  graph.setItemState(node, 'highlight', true)
+
+  // 3秒后取消高亮
+  setTimeout(() => {
+    if (graph && !graph.destroyed) {
+      graph.setItemState(node, 'highlight', false)
+    }
+  }, 3000)
+
+  const model = node.getModel()
+  console.log('🎯 聚焦节点:', model.name)
+}
+
 // 创建图谱实例
 const createGraph = () => {
   if (!graphContainer.value) return
@@ -107,7 +137,6 @@ const createGraph = () => {
   const width = graphContainer.value.clientWidth || 380
   const height = graphContainer.value.clientHeight || 500
 
-  // 如果已有实例，先销毁
   if (graph) {
     graph.destroy()
     graph = null
@@ -141,9 +170,19 @@ const createGraph = () => {
       style: { stroke: '#aaa', lineWidth: 1.5, endArrow: true },
       labelCfg: { style: { fill: '#666', fontSize: 9 }, autoRotate: true }
     },
+    // 节点高亮样式
+    nodeStateStyles: {
+      highlight: {
+        stroke: '#f00',
+        lineWidth: 3,
+        shadowBlur: 10,
+        shadowColor: '#f00'
+      }
+    },
     minZoom: 0.3,
     maxZoom: 3
   })
+
   window.__g6_graph = graph
 
   renderGraph()
@@ -178,19 +217,18 @@ const renderGraph = () => {
 
     setTimeout(() => {
       try {
-        // 强制布局
         graph.layout()
 
         setTimeout(() => {
-          // 先居中所有节点
           graph.fitCenter()
-          // 再缩放到合适比例
           graph.zoomTo(0.8)
-          // 重新绑定事件
-          if (window.__g6_graph) {
-            setTimeout(bindTouchEvents, 500)
-          }
-          console.log('布局完成，视图已居中')
+
+          setTimeout(() => {
+            if (window.__g6_graph) {
+              bindTouchEvents()
+            }
+            console.log('布局完成，视图已居中')
+          }, 300)
         }, 800)
       } catch (e) {
         console.error('layout error:', e)
@@ -206,7 +244,6 @@ const renderGraph = () => {
 // 监听数据变化
 watch([() => props.graphData.nodes.length, () => props.graphData.edges.length], () => {
   if (graph && !isRendering) {
-    // 数据变化时重建图谱
     createGraph()
   }
 })
@@ -237,6 +274,11 @@ onBeforeUnmount(() => {
     graph = null
   }
   window.removeEventListener('resize', handleResize)
+})
+
+// 暴露方法给父组件
+defineExpose({
+  focusNode
 })
 </script>
 

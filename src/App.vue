@@ -17,6 +17,7 @@
       <!-- 中间图谱区域 -->
       <el-main class="main-content">
         <KnowledgeGraph
+            ref="graphRef"
             :graph-data="currentGraphData"
             @node-click="handleNodeClick"
         />
@@ -37,7 +38,10 @@
       <!-- 右侧详情面板 -->
       <el-aside :width="rightWidth" class="right-aside" :class="{ 'mobile-open': rightOpen }">
         <div class="mobile-close" @click="rightOpen = false">✕</div>
-        <DetailPanel :entity-id="selectedEntityId" />
+        <DetailPanel
+            :entity-id="selectedEntityId"
+            @clear="handleClearDetail"
+        />
       </el-aside>
     </el-container>
   </el-container>
@@ -53,6 +57,7 @@ import { getAllEntities, graphData as initialGraphData } from './data/mockData'
 const allEntities = ref({ diseases: [], drugs: [], symptoms: [] })
 const currentGraphData = ref({ nodes: [], edges: [] })
 const selectedEntityId = ref(null)
+const graphRef = ref(null)
 
 // 移动端状态
 const leftOpen = ref(false)
@@ -62,22 +67,35 @@ const isMobile = ref(window.innerWidth <= 768)
 const leftWidth = computed(() => isMobile.value ? '0px' : '280px')
 const rightWidth = computed(() => isMobile.value ? '0px' : '320px')
 
+// 清空详情面板
+const handleClearDetail = () => {
+  selectedEntityId.value = null
+}
+
+// 选择左侧实体
 const handleSelectEntity = (entityId) => {
   selectedEntityId.value = entityId
   if (isMobile.value) {
-    rightOpen.value = true   // 打开右侧面板
-    leftOpen.value = false   // 关闭左侧面板
+    rightOpen.value = true
+    leftOpen.value = false
+  }
+
+  // 让图谱中的节点居中高亮
+  if (graphRef.value && graphRef.value.focusNode) {
+    graphRef.value.focusNode(entityId)
   }
 }
 
+// 点击图谱节点
 const handleNodeClick = (node) => {
   selectedEntityId.value = node.id
   if (isMobile.value) {
-    rightOpen.value = true   // 打开右侧面板
-    leftOpen.value = false   // 关闭左侧面板
+    rightOpen.value = true
+    leftOpen.value = false
   }
 }
 
+// 移动端面板控制
 const toggleLeftPanel = () => {
   leftOpen.value = !leftOpen.value
   if (leftOpen.value) {

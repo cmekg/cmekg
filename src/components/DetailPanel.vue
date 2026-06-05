@@ -1,12 +1,23 @@
 <template>
   <div class="detail-panel">
-    <!-- 有选中实体时显示详情 -->
+    <!-- 只有选中实体时才显示内容 -->
     <div v-if="selectedEntity" class="detail-content">
       <div class="detail-header">
         <h3>{{ selectedEntity.name }}</h3>
-        <el-tag :type="getTagType(selectedEntity.type)" size="small">
-          {{ getEntityTypeName(selectedEntity.type) }}
-        </el-tag>
+        <div class="detail-header-actions">
+          <el-tag :type="getTagType(selectedEntity.type)" size="small">
+            {{ getEntityTypeName(selectedEntity.type) }}
+          </el-tag>
+          <!-- 添加关闭按钮 -->
+          <el-button
+              type="text"
+              class="close-btn"
+              @click="clearEntity"
+              :icon="Close"
+          >
+            ✕
+          </el-button>
+        </div>
       </div>
 
       <el-tabs v-model="activeTab" class="detail-tabs">
@@ -100,10 +111,8 @@
       </el-tabs>
     </div>
 
-    <!-- 未选中任何实体时的空状态 -->
-    <div v-else class="empty-detail">
-      <el-empty description="点击左侧实体或图谱节点查看详情" />
-    </div>
+    <!-- 未选中任何实体时：完全空白 -->
+    <div v-else class="empty-detail"></div>
   </div>
 </template>
 
@@ -118,8 +127,16 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['clear'])
+
 const activeTab = ref('basic')
 const selectedEntity = ref(null)
+
+// 清空选中实体
+const clearEntity = () => {
+  selectedEntity.value = null
+  emit('clear')
+}
 
 // 实体类型映射
 const getEntityTypeName = (type) => {
@@ -233,10 +250,34 @@ const examinations = computed(() => {
   border-bottom: 2px solid #e4e7ed;
 }
 
+.detail-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .detail-header h3 {
   margin: 0;
   color: #2c3e50;
   font-size: 18px;
+}
+
+.close-btn {
+  font-size: 18px !important;
+  width: 28px;
+  height: 28px;
+  padding: 0 !important;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #909399;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  background-color: #f0f0f0;
+  color: #f56c6c;
 }
 
 .detail-tabs {
@@ -287,9 +328,6 @@ const examinations = computed(() => {
 }
 
 .empty-detail {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   height: 100%;
   min-height: 400px;
 }
