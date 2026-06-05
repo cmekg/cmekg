@@ -28,84 +28,6 @@ const getNodeStyle = (type) => {
   }
 }
 
-// 获取点击位置下的节点
-const getNodeAtPosition = (clientX, clientY) => {
-  if (!graph) return null
-
-  const canvas = graphContainer.value?.querySelector('canvas')
-  if (!canvas) return null
-
-  const rect = canvas.getBoundingClientRect()
-  const canvasX = clientX - rect.left
-  const canvasY = clientY - rect.top
-
-  const group = graph.getGroup()
-  const matrix = group.getMatrix()
-  const zoom = matrix ? matrix[0] : 1
-  const translateX = matrix ? matrix[4] : 0
-  const translateY = matrix ? matrix[5] : 0
-
-  const graphX = (canvasX - translateX) / zoom
-  const graphY = (canvasY - translateY) / zoom
-
-  const nodes = graph.getNodes()
-  let minDistance = 120
-  let closestNode = null
-
-  for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i]
-    const model = node.getModel()
-    const nodeX = model.x || 0
-    const nodeY = model.y || 0
-    const dx = graphX - nodeX
-    const dy = graphY - nodeY
-    const distance = Math.sqrt(dx * dx + dy * dy)
-
-    if (distance < minDistance) {
-      minDistance = distance
-      closestNode = node
-    }
-  }
-
-  if (closestNode && minDistance < 100) {
-    return closestNode.getModel()
-  }
-
-  return null
-}
-
-// 绑定事件（同时支持鼠标和触摸）
-const bindEvents = () => {
-  const canvas = graphContainer.value?.querySelector('canvas')
-  if (!canvas) {
-    setTimeout(bindEvents, 500)
-    return
-  }
-
-  const handleClick = (clientX, clientY) => {
-    const node = getNodeAtPosition(clientX, clientY)
-    if (node) {
-      emit('node-click', node)
-    } else {
-      emit('clear')
-    }
-  }
-
-  const handleMouseDown = (e) => {
-    e.preventDefault()
-    handleClick(e.clientX, e.clientY)
-  }
-
-  const handleTouchStart = (e) => {
-    e.preventDefault()
-    const touch = e.touches[0]
-    handleClick(touch.clientX, touch.clientY)
-  }
-
-  canvas.addEventListener('mousedown', handleMouseDown)
-  canvas.addEventListener('touchstart', handleTouchStart, { passive: false })
-}
-
 // 聚焦某个节点（居中并高亮）
 const focusNode = (nodeId) => {
   if (!graph) return
@@ -132,6 +54,11 @@ const focusNode = (nodeId) => {
       graph.setItemState(node, 'highlight', false)
     }
   }, 3000)
+}
+
+// 绑定事件（已完全禁用）
+const bindEvents = () => {
+  // 不绑定任何事件，点击图谱不会有任何反应
 }
 
 // 创建图谱实例
@@ -188,7 +115,6 @@ const createGraph = () => {
 
   window.__g6_graph = graph
   renderGraph()
-  setTimeout(bindEvents, 1000)
 }
 
 // 渲染图谱
@@ -220,11 +146,6 @@ const renderGraph = () => {
         graph.layout()
         setTimeout(() => {
           graph.fitView(20, undefined, undefined, [20, 20, 20, 20])
-          setTimeout(() => {
-            if (window.__g6_graph) {
-              bindEvents()
-            }
-          }, 300)
         }, 800)
       } catch (e) {}
     }, 100)
