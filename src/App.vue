@@ -19,8 +19,6 @@
         <KnowledgeGraph
             ref="graphRef"
             :graph-data="currentGraphData"
-            @node-click="handleNodeClick"
-            @clear="handleClearDetail"
         />
         <!-- 移动端浮动按钮 - 左侧 -->
         <div class="mobile-fab" @click="toggleLeftPanel">
