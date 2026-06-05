@@ -20,12 +20,13 @@
             :graph-data="currentGraphData"
             @node-click="handleNodeClick"
         />
-        <!-- 移动端浮动按钮 -->
+        <!-- 移动端浮动按钮 - 左侧 -->
         <div class="mobile-fab" @click="toggleLeftPanel">
           <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
             <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
           </svg>
         </div>
+        <!-- 移动端浮动按钮 - 右侧（有选中实体时才显示） -->
         <div class="mobile-fab-right" @click="toggleRightPanel" v-if="selectedEntityId">
           <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
             <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-7 7H3v4c0 1.1.9 2 2 2h4v-2H5v-4zM5 5h4V3H5c-1.1 0-2 .9-2 2v4h2V5zm14-2h-4v2h4v4h2V5c0-1.1-.9-2-2-2zm0 16h-4v2h4c1.1 0 2-.9 2-2v-4h-2v4z"/>
@@ -64,16 +65,16 @@ const rightWidth = computed(() => isMobile.value ? '0px' : '320px')
 const handleSelectEntity = (entityId) => {
   selectedEntityId.value = entityId
   if (isMobile.value) {
-    rightOpen.value = true
-    leftOpen.value = false
+    rightOpen.value = true   // 打开右侧面板
+    leftOpen.value = false   // 关闭左侧面板
   }
 }
 
 const handleNodeClick = (node) => {
   selectedEntityId.value = node.id
   if (isMobile.value) {
-    rightOpen.value = true
-    leftOpen.value = false
+    rightOpen.value = true   // 打开右侧面板
+    leftOpen.value = false   // 关闭左侧面板
   }
 }
 
@@ -142,6 +143,7 @@ onUnmounted(() => {
   background-color: #fff;
   border-right: 1px solid #e4e7ed;
   transition: transform 0.3s ease;
+  overflow-y: auto;
 }
 
 .main-content {
