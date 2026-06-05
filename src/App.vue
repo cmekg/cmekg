@@ -2,14 +2,6 @@
   <el-container class="app-container">
     <el-header class="app-header">
       <div class="logo">CMeKG 医学知识图谱</div>
-      <el-menu mode="horizontal" :ellipsis="false">
-        <el-menu-item index="1">首页</el-menu-item>
-        <el-menu-item index="2">知识图谱</el-menu-item>
-        <el-menu-item index="3">构建工具</el-menu-item>
-        <el-menu-item index="4">示范应用</el-menu-item>
-        <el-menu-item index="5">使用说明</el-menu-item>
-        <el-menu-item index="6">关于我们</el-menu-item>
-      </el-menu>
     </el-header>
 
     <el-container>
