@@ -14,7 +14,7 @@ const props = defineProps({
     default: () => ({ nodes: [], edges: [] })
   }
 })
-const emit = defineEmits(['node-click'])
+const emit = defineEmits(['node-click', 'clear'])
 
 const graphContainer = ref(null)
 let graph = null
@@ -28,7 +28,7 @@ const getNodeStyle = (type) => {
   }
 }
 
-// 获取触摸点下的节点
+// 获取点击位置下的节点
 const getNodeAtPosition = (clientX, clientY) => {
   if (!graph) return null
 
@@ -39,57 +39,70 @@ const getNodeAtPosition = (clientX, clientY) => {
   const canvasX = clientX - rect.left
   const canvasY = clientY - rect.top
 
+  const group = graph.getGroup()
+  const matrix = group.getMatrix()
+  const zoom = matrix ? matrix[0] : 1
+  const translateX = matrix ? matrix[4] : 0
+  const translateY = matrix ? matrix[5] : 0
+
+  const graphX = (canvasX - translateX) / zoom
+  const graphY = (canvasY - translateY) / zoom
+
   const nodes = graph.getNodes()
-  let minDistance = 100
+  let minDistance = 120
   let closestNode = null
 
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i]
     const model = node.getModel()
+    const nodeX = model.x || 0
+    const nodeY = model.y || 0
+    const dx = graphX - nodeX
+    const dy = graphY - nodeY
+    const distance = Math.sqrt(dx * dx + dy * dy)
 
-    try {
-      const screenPos = graph.getClientByPoint(model.x, model.y)
-      if (screenPos) {
-        const dx = canvasX - screenPos.x
-        const dy = canvasY - screenPos.y
-        const distance = Math.sqrt(dx * dx + dy * dy)
-
-        if (distance < minDistance) {
-          minDistance = distance
-          closestNode = node
-        }
-      }
-    } catch (e) {}
+    if (distance < minDistance) {
+      minDistance = distance
+      closestNode = node
+    }
   }
 
   if (closestNode && minDistance < 100) {
-    const model = closestNode.getModel()
-    console.log('✅ 命中节点:', model.name, '距离:', minDistance.toFixed(2))
-    return model
+    return closestNode.getModel()
   }
 
   return null
 }
 
-// 绑定触摸事件
-const bindTouchEvents = () => {
+// 绑定事件（同时支持鼠标和触摸）
+const bindEvents = () => {
   const canvas = graphContainer.value?.querySelector('canvas')
   if (!canvas) {
-    setTimeout(bindTouchEvents, 500)
+    setTimeout(bindEvents, 500)
     return
   }
 
-  console.log('✅ 绑定触摸事件')
+  const handleClick = (clientX, clientY) => {
+    const node = getNodeAtPosition(clientX, clientY)
+    if (node) {
+      emit('node-click', node)
+    } else {
+      emit('clear')
+    }
+  }
+
+  const handleMouseDown = (e) => {
+    e.preventDefault()
+    handleClick(e.clientX, e.clientY)
+  }
 
   const handleTouchStart = (e) => {
     e.preventDefault()
     const touch = e.touches[0]
-    const node = getNodeAtPosition(touch.clientX, touch.clientY)
-    if (node) {
-      emit('node-click', node)
-    }
+    handleClick(touch.clientX, touch.clientY)
   }
 
+  canvas.addEventListener('mousedown', handleMouseDown)
   canvas.addEventListener('touchstart', handleTouchStart, { passive: false })
 }
 
@@ -100,7 +113,6 @@ const focusNode = (nodeId) => {
   const node = graph.findById(nodeId)
   if (!node) return
 
-  // 使用 G6 内置的 focusItem 方法，自动居中
   try {
     graph.focusItem(node, true, {
       easing: 'easeCubic',
@@ -108,26 +120,18 @@ const focusNode = (nodeId) => {
       animate: true
     })
   } catch (e) {
-    console.log('focusItem 失败，尝试手动聚焦')
-    // 备选方案：获取节点位置手动移动
     const model = node.getModel()
     const width = graph.getWidth()
     const height = graph.getHeight()
     graph.moveTo(width / 2 - model.x, height / 2 - model.y)
   }
 
-  // 高亮节点
   graph.setItemState(node, 'highlight', true)
-
-  // 3秒后取消高亮
   setTimeout(() => {
     if (graph && !graph.destroyed) {
       graph.setItemState(node, 'highlight', false)
     }
   }, 3000)
-
-  const model = node.getModel()
-  console.log('🎯 聚焦节点:', model.name)
 }
 
 // 创建图谱实例
@@ -158,9 +162,9 @@ const createGraph = () => {
     },
     defaultNode: {
       type: 'circle',
-      size: 40,
+      size: 50,
       labelCfg: {
-        style: { fill: '#333', fontSize: 11 },
+        style: { fill: '#333', fontSize: 12 },
         position: 'bottom',
         offset: 0
       }
@@ -170,7 +174,6 @@ const createGraph = () => {
       style: { stroke: '#aaa', lineWidth: 1.5, endArrow: true },
       labelCfg: { style: { fill: '#666', fontSize: 9 }, autoRotate: true }
     },
-    // 节点高亮样式
     nodeStateStyles: {
       highlight: {
         stroke: '#f00',
@@ -184,9 +187,8 @@ const createGraph = () => {
   })
 
   window.__g6_graph = graph
-
   renderGraph()
-  setTimeout(bindTouchEvents, 1000)
+  setTimeout(bindEvents, 1000)
 }
 
 // 渲染图谱
@@ -210,29 +212,21 @@ const renderGraph = () => {
       label: edge.label || ''
     }))
 
-    console.log('渲染节点数:', nodes.length, '边数:', edges.length)
-
     graph.data({ nodes, edges })
     graph.render()
 
     setTimeout(() => {
       try {
         graph.layout()
-
         setTimeout(() => {
-          graph.fitCenter()
-          graph.zoomTo(0.8)
-
+          graph.fitView(20, undefined, undefined, [20, 20, 20, 20])
           setTimeout(() => {
             if (window.__g6_graph) {
-              bindTouchEvents()
+              bindEvents()
             }
-            console.log('布局完成，视图已居中')
           }, 300)
         }, 800)
-      } catch (e) {
-        console.error('layout error:', e)
-      }
+      } catch (e) {}
     }, 100)
   } catch (e) {
     console.error('renderGraph error:', e)
@@ -255,7 +249,6 @@ const handleResize = () => {
     if (width > 0 && height > 0) {
       try {
         graph.changeSize(width, height)
-        graph.fitView(20)
       } catch (e) {}
     }
   }
@@ -276,7 +269,6 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize)
 })
 
-// 暴露方法给父组件
 defineExpose({
   focusNode
 })

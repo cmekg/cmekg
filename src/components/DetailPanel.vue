@@ -1,6 +1,5 @@
 <template>
   <div class="detail-panel">
-    <!-- 只有选中实体时才显示内容 -->
     <div v-if="selectedEntity" class="detail-content">
       <div class="detail-header">
         <h3>{{ selectedEntity.name }}</h3>
@@ -8,12 +7,10 @@
           <el-tag :type="getTagType(selectedEntity.type)" size="small">
             {{ getEntityTypeName(selectedEntity.type) }}
           </el-tag>
-          <!-- 添加关闭按钮 -->
           <el-button
               type="text"
               class="close-btn"
               @click="clearEntity"
-              :icon="Close"
           >
             ✕
           </el-button>
@@ -21,7 +18,6 @@
       </div>
 
       <el-tabs v-model="activeTab" class="detail-tabs">
-        <!-- 基本信息标签页 -->
         <el-tab-pane label="基本信息" name="basic">
           <div class="detail-section">
             <div
@@ -47,7 +43,6 @@
           </div>
         </el-tab-pane>
 
-        <!-- 临床信息标签页 -->
         <el-tab-pane label="临床信息" name="clinical" v-if="clinicalInfo.length">
           <div class="detail-section">
             <div
@@ -70,7 +65,6 @@
           </div>
         </el-tab-pane>
 
-        <!-- 治疗方案标签页 -->
         <el-tab-pane label="治疗方案" name="treatment" v-if="treatment.length">
           <div class="detail-section">
             <div
@@ -83,7 +77,6 @@
           </div>
         </el-tab-pane>
 
-        <!-- 并发症标签页 -->
         <el-tab-pane label="并发症" name="complications" v-if="complications.length">
           <div class="detail-section">
             <div
@@ -96,7 +89,6 @@
           </div>
         </el-tab-pane>
 
-        <!-- 检查手段标签页 -->
         <el-tab-pane label="检查手段" name="examination" v-if="examinations.length">
           <div class="detail-section">
             <div
@@ -111,8 +103,9 @@
       </el-tabs>
     </div>
 
-    <!-- 未选中任何实体时：完全空白 -->
-    <div v-else class="empty-detail"></div>
+    <div v-else class="empty-detail">
+      <el-empty description="点击左侧菜单查看详情" />
+    </div>
   </div>
 </template>
 
@@ -121,45 +114,28 @@ import { ref, computed, watch } from 'vue'
 import { graphData } from '@/data/mockData'
 
 const props = defineProps({
-  entityId: {
-    type: String,
-    default: null
-  }
+  entityId: { type: String, default: null }
 })
-
 const emit = defineEmits(['clear'])
 
 const activeTab = ref('basic')
 const selectedEntity = ref(null)
 
-// 清空选中实体
 const clearEntity = () => {
   selectedEntity.value = null
   emit('clear')
 }
 
-// 实体类型映射
 const getEntityTypeName = (type) => {
-  const typeMap = {
-    disease: '疾病',
-    drug: '药物',
-    symptom: '症状',
-    department: '科室'
-  }
-  return typeMap[type] || '实体'
+  const map = { disease: '疾病', drug: '药物', symptom: '症状', department: '科室' }
+  return map[type] || '实体'
 }
 
 const getTagType = (type) => {
-  const typeMap = {
-    disease: 'danger',
-    drug: 'primary',
-    symptom: 'warning',
-    department: 'success'
-  }
-  return typeMap[type] || 'info'
+  const map = { disease: 'danger', drug: 'primary', symptom: 'warning', department: 'success' }
+  return map[type] || 'info'
 }
 
-// 监听 entityId 变化，获取对应的实体数据
 watch(() => props.entityId, (newId) => {
   if (newId) {
     const entity = graphData.nodes.find(n => n.id === newId)
@@ -174,61 +150,48 @@ watch(() => props.entityId, (newId) => {
   }
 }, { immediate: true })
 
-// 基本信息（排除数组类型的字段）
 const basicInfo = computed(() => {
-  if (!selectedEntity.value || !selectedEntity.value.detail) return {}
-
+  if (!selectedEntity.value?.detail) return {}
   const detail = selectedEntity.value.detail
   const excludeKeys = ['临床症状', '治疗方案', '常用药物', '并发症', '实验室检查', '影像学检查', '预防措施', '高危因素', '适应症', '副作用', '诊疗范围', '常见于']
   const info = {}
-
   Object.keys(detail).forEach(key => {
     if (!excludeKeys.includes(key) && !Array.isArray(detail[key])) {
       info[key] = detail[key]
     }
   })
-
   return info
 })
 
-// 临床信息（症状、药物等）
 const clinicalInfo = computed(() => {
-  if (!selectedEntity.value || !selectedEntity.value.detail) return []
-
+  if (!selectedEntity.value?.detail) return []
   const detail = selectedEntity.value.detail
   const result = []
-
-  const clinicalFields = ['临床症状', '常用药物', '高危因素']
-  clinicalFields.forEach(field => {
-    if (detail[field] && Array.isArray(detail[field]) && detail[field].length > 0) {
+  const fields = ['临床症状', '常用药物', '高危因素']
+  fields.forEach(field => {
+    if (detail[field] && Array.isArray(detail[field]) && detail[field].length) {
       result.push({ key: field, values: detail[field] })
     }
   })
-
   return result
 })
 
-// 治疗方案
 const treatment = computed(() => {
-  if (!selectedEntity.value || !selectedEntity.value.detail) return []
-  const detail = selectedEntity.value.detail
-  return detail['治疗方案'] || detail['诊疗范围'] || []
+  if (!selectedEntity.value?.detail) return []
+  return selectedEntity.value.detail['治疗方案'] || []
 })
 
-// 并发症
 const complications = computed(() => {
-  if (!selectedEntity.value || !selectedEntity.value.detail) return []
+  if (!selectedEntity.value?.detail) return []
   return selectedEntity.value.detail['并发症'] || []
 })
 
-// 检查手段
 const examinations = computed(() => {
-  if (!selectedEntity.value || !selectedEntity.value.detail) return []
+  if (!selectedEntity.value?.detail) return []
   const detail = selectedEntity.value.detail
   const exams = []
   if (detail['实验室检查']) exams.push(...detail['实验室检查'])
   if (detail['影像学检查']) exams.push(...detail['影像学检查'])
-  if (detail['辅助检查']) exams.push(...detail['辅助检查'])
   return exams
 })
 </script>
@@ -239,6 +202,7 @@ const examinations = computed(() => {
   padding: 20px;
   overflow-y: auto;
   background-color: #fff;
+  border-left: 1px solid #e4e7ed;
 }
 
 .detail-header {
@@ -270,9 +234,8 @@ const examinations = computed(() => {
   border-radius: 50%;
   cursor: pointer;
   color: #909399;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: transparent;
+  border: none;
 }
 
 .close-btn:hover {
@@ -280,24 +243,11 @@ const examinations = computed(() => {
   color: #f56c6c;
 }
 
-.detail-tabs {
-  margin-top: 10px;
-}
-
-.detail-section {
-  margin-top: 15px;
-}
-
 .detail-item {
   margin-bottom: 15px;
   padding: 12px;
   background-color: #f8f9fa;
   border-radius: 8px;
-  transition: all 0.2s;
-}
-
-.detail-item:hover {
-  background-color: #f0f2f5;
 }
 
 .detail-label {
@@ -305,13 +255,6 @@ const examinations = computed(() => {
   color: #409eff;
   margin-bottom: 8px;
   font-size: 13px;
-  letter-spacing: 0.5px;
-}
-
-.detail-value {
-  font-size: 14px;
-  color: #606266;
-  line-height: 1.6;
 }
 
 .detail-tag {
@@ -322,12 +265,15 @@ const examinations = computed(() => {
 .treatment-item,
 .complication-item,
 .examination-item {
-  margin-bottom: 10px;
   display: inline-block;
   margin-right: 10px;
+  margin-bottom: 10px;
 }
 
 .empty-detail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 100%;
   min-height: 400px;
 }

@@ -20,6 +20,7 @@
             ref="graphRef"
             :graph-data="currentGraphData"
             @node-click="handleNodeClick"
+            @clear="handleClearDetail"
         />
         <!-- 移动端浮动按钮 - 左侧 -->
         <div class="mobile-fab" @click="toggleLeftPanel">
@@ -80,18 +81,15 @@ const handleSelectEntity = (entityId) => {
     leftOpen.value = false
   }
 
-  // 让图谱中的节点居中高亮
   if (graphRef.value && graphRef.value.focusNode) {
     graphRef.value.focusNode(entityId)
   }
 }
 
-// 点击图谱节点
+// 点击图谱节点（只有电脑端才显示详情）
 const handleNodeClick = (node) => {
-  selectedEntityId.value = node.id
-  if (isMobile.value) {
-    rightOpen.value = true
-    leftOpen.value = false
+  if (!isMobile.value) {
+    selectedEntityId.value = node.id
   }
 }
 
