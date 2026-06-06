@@ -3,28 +3,28 @@
 
 // ==================== 图谱颜色配置 ====================
 export const graphColors = {
-    level1: '#E74C3C',   // 一级菜单 - 红色
-    level2: '#3498DB',   // 二级菜单 - 蓝色
-    level3: '#F39C12'    // 三级药物 - 橙色
+    level1: "#E74C3C",   // 一级菜单 - 红色
+    level2: "#3498DB",   // 二级菜单 - 蓝色
+    level3: "#F39C12"    // 三级药物 - 橙色
 }
 
 // ==================== 左侧菜单配置（数据源） ====================
 export const leftMenuConfig = [
     {
-        key: 'definition',
-        label: '定义',
+        key: "definition",
+        label: "定义",
         children: [],
         content: {
-            type: 'static',
-            value: '通过细胞杀伤、免疫调控、内分泌调节等途径，在细胞、分子水平进行作用，达到抑制肿瘤生长或消除肿瘤的药物'
+            type: "static",
+            value: "通过细胞杀伤、免疫调控、内分泌调节等途径，在细胞、分子水平进行作用，达到抑制肿瘤生长或消除肿瘤的药物"
         }
     },
     {
-        key: 'operation',
-        label: '操作要点',
+        key: "operation",
+        label: "操作要点",
         children: [],
         content: {
-            type: 'drugDetail',
+            type: "drugDetail",
             detail: {
                 "再次双人核对": "",
                 "遵循 WS/T 433—2023、T/CNAS 33—2023 的规定进行血管通路的建立、使用及维护。": "",
@@ -50,11 +50,11 @@ export const leftMenuConfig = [
         }
     },
     {
-        key: 'occupationalProtection',
-        label: '职业防护',
+        key: "occupationalProtection",
+        label: "职业防护",
         children: [],
         content: {
-            type: 'drugDetail',
+            type: "drugDetail",
             detail: {
                 "戴双层手套": "",
                 "戴口罩": "",
@@ -68,14 +68,14 @@ export const leftMenuConfig = [
         }
     },
     {
-        key: 'assessment',
-        label: '评估',
+        key: "assessment",
+        label: "评估",
         children: [
             {
-                key: 'doubleCheck',
-                label: '双人核对',
+                key: "doubleCheck",
+                label: "双人核对",
                 content: {
-                    type: 'drugDetail',
+                    type: "drugDetail",
                     detail: {
                         "药物名称": "",
                         "规格": "",
@@ -86,13 +86,13 @@ export const leftMenuConfig = [
                     }
                 }
             },
-            {key: 'assessment2', label: '治疗方案'},
-            {key: 'assessment3', label: '药物性质'},
+            {key: "assessment2", label: "治疗方案"},
+            {key: "assessment3", label: "药物性质"},
             {
-                key: 'assessment4',
-                label: '血管条件',
+                key: "assessment4",
+                label: "血管条件",
                 content: {
-                    type: 'drugDetail',
+                    type: "drugDetail",
                     detail: {
                         "不使用一次性静脉输液钢针输注刺激性或发疱性抗肿瘤药物": "",
                         "不宜使用外周血管通路装置输注刺激性或发疱性抗肿瘤药物": "",
@@ -100,12 +100,12 @@ export const leftMenuConfig = [
                     }
                 }
             },
-            {key: 'assessment5', label: '用药史'},
+            {key: "assessment5", label: "用药史"},
             {
-                key: 'assessment6',
-                label: '不良反应史',
+                key: "assessment6",
+                label: "不良反应史",
                 content: {
-                    type: 'drugDetail',
+                    type: "drugDetail",
                     detail: {
                         "既往胃肠道反应": "",
                         "周围神经毒性反应": "",
@@ -113,13 +113,13 @@ export const leftMenuConfig = [
                     }
                 }
             },
-            {key: 'assessment7', label: '过敏史'},
-            {key: 'assessment8', label: '两种及以上方式查对患者身份信息'},
+            {key: "assessment7", label: "过敏史"},
+            {key: "assessment8", label: "两种及以上方式查对患者身份信息"},
             {
-                key: 'assessment9',
-                label: '遵照药品说明书选择适宜的输液装置',
+                key: "assessment9",
+                label: "遵照药品说明书选择适宜的输液装置",
                 content: {
-                    type: 'drugDetail',
+                    type: "drugDetail",
                     detail: {
                         "材质": "",
                         "过滤器孔径": "",
@@ -129,18 +129,18 @@ export const leftMenuConfig = [
         ]
     },
     {
-        key: 'drugCategory',
-        label: '药物分类',
+        key: "drugCategory",
+        label: "药物分类",
         children: [
             {
-                key: 'targeted',
-                label: '分子靶向药物',
+                key: "targeted",
+                label: "分子靶向药物",
                 children: [
                     {
-                        key: 'rituximab',
-                        label: '利妥昔单抗',
+                        key: "rituximab",
+                        label: "利妥昔单抗",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "靶向",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -153,10 +153,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'cetuximab',
-                        label: '西妥昔单抗',
+                        key: "cetuximab",
+                        label: "西妥昔单抗",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "靶向",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -169,10 +169,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'pertuzumab',
-                        label: '帕妥珠单抗',
+                        key: "pertuzumab",
+                        label: "帕妥珠单抗",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "靶向",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -185,10 +185,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'trastuzumab',
-                        label: '曲妥珠单抗',
+                        key: "trastuzumab",
+                        label: "曲妥珠单抗",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "靶向",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -201,10 +201,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'nimotuzumab',
-                        label: '尼妥珠单抗',
+                        key: "nimotuzumab",
+                        label: "尼妥珠单抗",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "靶向",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -217,10 +217,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'bevacizumab',
-                        label: '贝伐珠单抗',
+                        key: "bevacizumab",
+                        label: "贝伐珠单抗",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "靶向",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -235,30 +235,14 @@ export const leftMenuConfig = [
                 ],
             },
             {
-                key: 'immunotherapy',
-                label: '免疫治疗药物',
+                key: "immunotherapy",
+                label: "免疫治疗药物",
                 children: [
                     {
-                        key: 'immunotherapy1',
-                        label: '信迪利单抗',
+                        key: "immunotherapy1",
+                        label: "信迪利单抗",
                         content: {
-                            type: 'drugDetail',
-                            detail: {
-                                "药物性质": "",
-                                "溶媒": "",
-                                "溶媒量（ml）": "",
-                                "浓度（mg/ml）": "",
-                                "输液时间（min）": "",
-                                "稳定性（h）": "",
-                                "注意事项": "/"
-                            }
-                        }
-                    },
-                    {
-                        key: 'immunotherapy2',
-                        label: '阿替利珠单抗',
-                        content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "免疫检查点抑制剂",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -271,10 +255,26 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'immunotherapy3',
-                        label: '替雷利珠单抗',
+                        key: "immunotherapy2",
+                        label: "阿替利珠单抗",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
+                            detail: {
+                                "药物性质": "免疫检查点抑制剂",
+                                "溶媒": "0.9%氯化钠注射液",
+                                "溶媒量（ml）": "100",
+                                "浓度（mg/ml）": "1.5～5",
+                                "输液时间（min）": "30～60",
+                                "稳定性（h）": "6（室温）24（2°C～8°C）",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: "immunotherapy3",
+                        label: "替雷利珠单抗",
+                        content: {
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "免疫检查点抑制剂",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -287,10 +287,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'immunotherapy4',
-                        label: '度伐利尤单抗',
+                        key: "immunotherapy4",
+                        label: "度伐利尤单抗",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "免疫检查点抑制剂",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -303,10 +303,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'immunotherapy5',
-                        label: '纳武利尤单抗',
+                        key: "immunotherapy5",
+                        label: "纳武利尤单抗",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "免疫检查点抑制剂",
                                 "溶媒": "0.9%氯化钠注射液 /5%葡萄糖注射液",
@@ -319,10 +319,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'immunotherapy6',
-                        label: '特瑞普利单抗',
+                        key: "immunotherapy6",
+                        label: "特瑞普利单抗",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "免疫检查点抑制剂",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -335,10 +335,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'immunotherapy7',
-                        label: '帕博利珠单抗',
+                        key: "immunotherapy7",
+                        label: "帕博利珠单抗",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "免疫检查点抑制剂",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -351,10 +351,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'immunotherapy8',
-                        label: '卡瑞利珠单抗',
+                        key: "immunotherapy8",
+                        label: "卡瑞利珠单抗",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "免疫检查点抑制剂",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -369,19 +369,19 @@ export const leftMenuConfig = [
                 ],
             },
             {
-                key: 'endocrine',
-                label: '内分泌治疗药物',
+                key: "endocrine",
+                label: "内分泌治疗药物",
                 children: [],
             },
             {
-                key: 'chemotherapy',
-                label: '化学治疗药物',
+                key: "chemotherapy",
+                label: "化学治疗药物",
                 children: [
                     {
-                        key: 'chemotherapy1',
-                        label: '氟达拉滨',
+                        key: "chemotherapy1",
+                        label: "氟达拉滨",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "影响核酸合成",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -394,10 +394,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy2',
-                        label: '艾立布林',
+                        key: "chemotherapy2",
+                        label: "艾立布林",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "干扰微血管蛋白合成",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -410,10 +410,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy3',
-                        label: '紫杉醇脂质体',
+                        key: "chemotherapy3",
+                        label: "紫杉醇脂质体",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "干扰微血管蛋白合成",
                                 "溶媒": "5%葡萄糖注射液",
@@ -426,10 +426,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy4',
-                        label: '紫杉醇注射液',
+                        key: "chemotherapy4",
+                        label: "紫杉醇注射液",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "干扰微血管蛋白合成",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -442,10 +442,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy5',
-                        label: '多西他赛',
+                        key: "chemotherapy5",
+                        label: "多西他赛",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "干扰微血管蛋白合成",
                                 "溶媒": "0.9%氯化钠注射液 /5%葡萄糖注射液",
@@ -458,10 +458,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy6',
-                        label: '长春瑞滨',
+                        key: "chemotherapy6",
+                        label: "长春瑞滨",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "干扰微血管蛋白合成",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -474,10 +474,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy7',
-                        label: '长春地辛',
+                        key: "chemotherapy7",
+                        label: "长春地辛",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "干扰微血管蛋白合成",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -490,10 +490,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy8',
-                        label: '优替德隆',
+                        key: "chemotherapy8",
+                        label: "优替德隆",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "干扰微血管蛋白合成",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -506,10 +506,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy9',
-                        label: '阿糖胞苷',
+                        key: "chemotherapy9",
+                        label: "阿糖胞苷",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "影响核酸合成",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -522,10 +522,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy10',
-                        label: '紫杉醇白蛋白',
+                        key: "chemotherapy10",
+                        label: "紫杉醇白蛋白",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "干扰微血管蛋白合成",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -538,10 +538,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy11',
-                        label: '表柔比星',
+                        key: "chemotherapy11",
+                        label: "表柔比星",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于核酸转录",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -554,10 +554,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy12',
-                        label: '多柔比星脂质体',
+                        key: "chemotherapy12",
+                        label: "多柔比星脂质体",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于核酸转录",
                                 "溶媒": "5%葡萄糖溶液",
@@ -570,10 +570,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy13',
-                        label: '米托蒽醌',
+                        key: "chemotherapy13",
+                        label: "米托蒽醌",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于核酸转录",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -586,10 +586,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy14',
-                        label: '多柔比星',
+                        key: "chemotherapy14",
+                        label: "多柔比星",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于核酸转录",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -602,10 +602,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy15',
-                        label: '吡柔比星',
+                        key: "chemotherapy15",
+                        label: "吡柔比星",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于核酸转录",
                                 "溶媒": "5%葡萄糖注射液",
@@ -618,10 +618,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy16',
-                        label: '达卡巴嗪',
+                        key: "chemotherapy16",
+                        label: "达卡巴嗪",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于DNA结构",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -634,10 +634,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy17',
-                        label: '异环磷酰胺',
+                        key: "chemotherapy17",
+                        label: "异环磷酰胺",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于DNA结构",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -650,10 +650,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy18',
-                        label: '环磷酰胺',
+                        key: "chemotherapy18",
+                        label: "环磷酰胺",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于DNA结构",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -666,10 +666,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy19',
-                        label: '顺铂',
+                        key: "chemotherapy19",
+                        label: "顺铂",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于DNA结构",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖氯化钠注射液",
@@ -677,15 +677,15 @@ export const leftMenuConfig = [
                                 "浓度（mg/ml）": "/",
                                 "输液时间（min）": "6～120",
                                 "稳定性（h）": "24",
-                                "注意事项": "/遮光保存，密闭"
+                                "注意事项": "遮光保存，密闭"
                             }
                         }
                     },
                     {
-                        key: 'chemotherapy20',
-                        label: '卡铂',
+                        key: "chemotherapy20",
+                        label: "卡铂",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于DNA结构",
                                 "溶媒": "5%葡萄糖注射液",
@@ -698,10 +698,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy21',
-                        label: '奈达铂',
+                        key: "chemotherapy21",
+                        label: "奈达铂",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于DNA结构",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -714,10 +714,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy22',
-                        label: '奥沙利铂',
+                        key: "chemotherapy22",
+                        label: "奥沙利铂",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于DNA结构",
                                 "溶媒": "5%葡萄糖注射液",
@@ -730,10 +730,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy23',
-                        label: '洛铂',
+                        key: "chemotherapy23",
+                        label: "洛铂",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于DNA结构",
                                 "溶媒": "5%葡萄糖注射液",
@@ -746,10 +746,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy24',
-                        label: '依托泊苷',
+                        key: "chemotherapy24",
+                        label: "依托泊苷",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于DNA复制",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -762,10 +762,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy25',
-                        label: '替尼泊苷',
+                        key: "chemotherapy25",
+                        label: "替尼泊苷",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于DNA复制",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -778,10 +778,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy26',
-                        label: '伊立替康',
+                        key: "chemotherapy26",
+                        label: "伊立替康",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于DNA复制",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -794,10 +794,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy27',
-                        label: '托泊替康',
+                        key: "chemotherapy27",
+                        label: "托泊替康",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "作用于DNA复制",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -810,10 +810,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy28',
-                        label: '吉西他滨',
+                        key: "chemotherapy28",
+                        label: "吉西他滨",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "影响叶酸合成",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -826,10 +826,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy29',
-                        label: '培美曲塞',
+                        key: "chemotherapy29",
+                        label: "培美曲塞",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "影响核酸合成",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -842,10 +842,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy30',
-                        label: '雷替曲塞',
+                        key: "chemotherapy30",
+                        label: "雷替曲塞",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "影响核酸合成",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -858,10 +858,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy31',
-                        label: '氟尿嘧啶',
+                        key: "chemotherapy31",
+                        label: "氟尿嘧啶",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "影响核酸合成",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -874,10 +874,10 @@ export const leftMenuConfig = [
                         }
                     },
                     {
-                        key: 'chemotherapy32',
-                        label: '甲氨蝶呤',
+                        key: "chemotherapy32",
+                        label: "甲氨蝶呤",
                         content: {
-                            type: 'drugDetail',
+                            type: "drugDetail",
                             detail: {
                                 "药物性质": "影响核酸合成",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -904,7 +904,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
 
     for (const item of items) {
         // 添加当前节点
-        const nodeType = level === 3 ? 'drug' : 'menu'
+        const nodeType = level === 3 ? "drug" : "menu"
         nodes.push({
             id: item.key,
             name: item.label,
@@ -917,7 +917,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
             edges.push({
                 source: parentId,
                 target: item.key,
-                label: '',
+                label: "",
                 arrow: true  // 有箭头
             })
         }
@@ -949,7 +949,7 @@ for (let i = 0; i < level1Keys.length - 1; i++) {
     level1Edges.push({
         source: level1Keys[i],
         target: level1Keys[i + 1],
-        label: '',
+        label: "",
         arrow: false  // 无箭头
     })
 }

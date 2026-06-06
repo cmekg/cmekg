@@ -164,7 +164,9 @@ const handleItemClick = (key) => {
 .menu-tree {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   border-right: none;
+  height: 100%;
 }
 
 /* 搜索结果下拉框 */

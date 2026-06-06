@@ -25,7 +25,27 @@ let isRendering = false
 const getNodeColor = (node) => {
   if (node.level === 1) return graphColors.level1
   if (node.level === 2) return graphColors.level2
-  return graphColors.level3
+  // 三级：基于节点 id 使用随机颜色（同一节点颜色稳定）
+  return colorPalette[getColorIndex(node.id)]
+}
+
+// 预定义颜色池
+const colorPalette = [
+  '#F39C12', '#E67E22', '#F1C40F', '#2ECC71', '#1ABC9C',
+  '#3498DB', '#9B59B6', '#E74C3C', '#E91E63', '#00BCD4',
+  '#4CAF50', '#FF9800', '#8E44AD', '#16A085', '#C0392B',
+  '#2C3E50', '#D35400', '#BDC3C7', '#7F8C8D', '#27AE60',
+  '#FF6B6B', '#4ECDC4', '#FFE66D', '#95E77E', '#DDA0DD'
+]
+
+// 根据字符串生成稳定的颜色索引
+const getColorIndex = (str) => {
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i)
+    hash = hash & hash
+  }
+  return Math.abs(hash) % colorPalette.length
 }
 
 // 节点大小配置
