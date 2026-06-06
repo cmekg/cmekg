@@ -132,12 +132,75 @@ export const leftMenuConfig = [
                             }
                         }
                     },
-                    {key: 'pertuzumab', label: '帕妥珠单抗', content: { type: 'static', value: '帕妥珠单抗详细信息待补充' } },
-                    { key: 'trastuzumab', label: '曲妥珠单抗', content: { type: 'static', value: '曲妥珠单抗详细信息待补充' } },
-                    { key: 'nimotuzumab', label: '尼妥珠单抗', content: { type: 'static', value: '尼妥珠单抗详细信息待补充' } },
-                    { key: 'bevacizumab', label: '贝伐珠单抗', content: { type: 'static', value: '贝伐珠单抗详细信息待补充' } }
+                    {
+                        key: 'pertuzumab',
+                        label: '帕妥珠单抗',
+                        content: {
+                            type: 'drugDetail',
+                            drugName: '帕妥珠单抗',
+                            detail: {
+                                "药物性质": "靶向",
+                                "溶媒": "0.9%氯化钠注射液",
+                                "溶媒量（ml）": "250",
+                                "浓度（mg/ml）": "1.6～3.0",
+                                "输液时间（min）": "起始剂量为840mg，静脉输注时间为 60min；给药剂量为420mg，静脉输注时间为30～60min。曲妥珠单抗与帕妥珠单抗联合使用时，本品起始剂量按8mg/kg，静脉输注时间为90 min；此后每3周一次，本品剂量按 6mg/kg，静脉输注时间为30～90min",
+                                "稳定性（h）": "24",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'trastuzumab',
+                        label: '曲妥珠单抗',
+                        content: {
+                            type: 'drugDetail',
+                            drugName: '曲妥珠单抗',
+                            detail: {
+                                "药物性质": "靶向",
+                                "溶媒": "0.9%氯化钠注射液",
+                                "溶媒量（ml）": "259",
+                                "浓度（mg/ml）": "21",
+                                "输液时间（min）": "首次＞90，耐受良好后续30",
+                                "稳定性（h）": "24",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'nimotuzumab',
+                        label: '尼妥珠单抗',
+                        content: {
+                            type: 'drugDetail',
+                            drugName: '尼妥珠单抗',
+                            detail: {
+                                "药物性质": "靶向",
+                                "溶媒": "0.9%氯化钠注射液",
+                                "溶媒量（ml）": "250",
+                                "浓度（mg/ml）": "/",
+                                "输液时间（min）": "＞60",
+                                "稳定性（h）": "8（室温）24（2°C～8°C）",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'bevacizumab',
+                        label: '贝伐珠单抗',
+                        content: {
+                            type: 'drugDetail',
+                            drugName: '贝伐珠单抗',
+                            detail: {
+                                "药物性质": "靶向",
+                                "溶媒": "0.9%氯化钠注射液",
+                                "溶媒量（ml）": "/",
+                                "浓度（mg/ml）": "1.4～16.5",
+                                "输液时间（min）": "首次＞90，耐受良好第二次60，耐受良好后续30",
+                                "稳定性（h）": "24",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
                 ],
-                content: { type: 'static', value: '...' }
             },
             {
                 key: 'immunotherapy',
