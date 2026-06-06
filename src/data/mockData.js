@@ -206,22 +206,155 @@ export const leftMenuConfig = [
                 key: 'immunotherapy',
                 label: '免疫治疗药物',
                 children: [
+                    {
+                        key: 'immunotherapy1',
+                        label: '信迪利单抗',
+                        content: {
+                            type: 'drugDetail',
+                            drugName: '信迪利单抗',
+                            detail: {
+                                "药物性质": "",
+                                "溶媒": "",
+                                "溶媒量（ml）": "",
+                                "浓度（mg/ml）": "",
+                                "输液时间（min）": "",
+                                "稳定性（h）": "",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'immunotherapy2',
+                        label: '阿替利珠单抗',
+                        content: {
+                            type: 'drugDetail',
+                            drugName: '阿替利珠单抗',
+                            detail: {
+                                "药物性质": "免疫检查点抑制剂",
+                                "溶媒": "0.9%氯化钠注射液",
+                                "溶媒量（ml）": "100",
+                                "浓度（mg/ml）": "1.5～5",
+                                "输液时间（min）": "30～60",
+                                "稳定性（h）": "6（室温）24（2°C～8°C）",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'immunotherapy3',
+                        label: '替雷利珠单抗',
+                        content: {
+                            type: 'drugDetail',
+                            drugName: '替雷利珠单抗',
+                            detail: {
+                                "药物性质": "免疫检查点抑制剂",
+                                "溶媒": "0.9%氯化钠注射液",
+                                "溶媒量（ml）": "/",
+                                "浓度（mg/ml）": "/",
+                                "输液时间（min）": "首次＞60，耐受良好后续＞30",
+                                "稳定性（h）": "8（室温）24（2°C～8°C）",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'immunotherapy4',
+                        label: '度伐利尤单抗',
+                        content: {
+                            type: 'drugDetail',
+                            drugName: '度伐利尤单抗',
+                            detail: {
+                                "药物性质": "免疫检查点抑制剂",
+                                "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
+                                "溶媒量（ml）": "/",
+                                "浓度（mg/ml）": "1～15",
+                                "输液时间（min）": "＞60",
+                                "稳定性（h）": "4（室温）24（2°C～8°C）",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'immunotherapy5',
+                        label: '纳武利尤单抗',
+                        content: {
+                            type: 'drugDetail',
+                            drugName: '纳武利尤单抗',
+                            detail: {
+                                "药物性质": "免疫检查点抑制剂",
+                                "溶媒": "0.9%氯化钠注射液 /5%葡萄糖注射液",
+                                "溶媒量（ml）": "/",
+                                "浓度（mg/ml）": "1/10",
+                                "输液时间（min）": "60",
+                                "稳定性（h）": "8（室温）24（2°C～8°C）",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'immunotherapy6',
+                        label: '特瑞普利单抗',
+                        content: {
+                            type: 'drugDetail',
+                            drugName: '特瑞普利单抗',
+                            detail: {
+                                "药物性质": "免疫检查点抑制剂",
+                                "溶媒": "0.9%氯化钠注射液",
+                                "溶媒量（ml）": "100",
+                                "浓度（mg/ml）": "1～3",
+                                "输液时间（min）": "首次＞60，耐受良好后续30",
+                                "稳定性（h）": "8（室温）24（2°C～8°C）",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'immunotherapy7',
+                        label: '帕博利珠单抗',
+                        content: {
+                            type: 'drugDetail',
+                            drugName: '帕博利珠单抗',
+                            detail: {
+                                "药物性质": "免疫检查点抑制剂",
+                                "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
+                                "溶媒量（ml）": "/",
+                                "浓度（mg/ml）": "1～10",
+                                "输液时间（min）": "＞30",
+                                "稳定性（h）": "6（室温）24（2°C～8°C）",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'immunotherapy8',
+                        label: '卡瑞利珠单抗',
+                        content: {
+                            type: 'drugDetail',
+                            drugName: '卡瑞利珠单抗',
+                            detail: {
+                                "药物性质": "免疫检查点抑制剂",
+                                "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
+                                "溶媒量（ml）": "/",
+                                "浓度（mg/ml）": "/",
+                                "输液时间（min）": "30～60",
+                                "稳定性（h）": "6（室温）24（2°C～8°C）",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
                 ],
-                content: { type: 'static', value: '...' }
             },
             {
                 key: 'endocrine',
                 label: '内分泌治疗药物',
                 children: [
                 ],
-                content: { type: 'static', value: '...' }
             },
             {
                 key: 'chemotherapy',
                 label: '化学治疗药物',
                 children: [
                 ],
-                content: { type: 'static', value: '...' }
             }
         ]
     }
