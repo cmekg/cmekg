@@ -148,7 +148,8 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
             edges.push({
                 source: parentId,
                 target: item.key,
-                label: ''
+                label: '',
+                arrow: true  // 有箭头
             })
         }
 
@@ -179,7 +180,8 @@ for (let i = 0; i < level1Keys.length - 1; i++) {
     level1Edges.push({
         source: level1Keys[i],
         target: level1Keys[i + 1],
-        label: ''
+        label: '',
+        arrow: false  // 无箭头
     })
 }
 

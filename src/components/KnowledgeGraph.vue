@@ -111,7 +111,7 @@ const createGraph = () => {
     },
     defaultEdge: {
       type: 'line',
-      style: { stroke: '#aaa', lineWidth: 1.5, endArrow: false },
+      style: { stroke: '#aaa', lineWidth: 1.5 },
       labelCfg: { style: { fill: '#666', fontSize: 9 }, autoRotate: true }
     },
     nodeStateStyles: {
@@ -135,7 +135,7 @@ const createGraph = () => {
   renderGraph()
 }
 
-// 渲染图谱
+// 渲染图谱（根据边的 arrow 属性设置箭头）
 const renderGraph = () => {
   if (!graph || isRendering) return
 
@@ -155,7 +155,11 @@ const renderGraph = () => {
     const edges = props.graphData.edges.map(edge => ({
       source: edge.source,
       target: edge.target,
-      label: edge.label || ''
+      label: edge.label || '',
+      // 根据 arrow 属性决定是否有箭头，默认为 true（有箭头）
+      style: {
+        endArrow: edge.arrow !== false  // 如果 arrow 为 false 则无箭头，否则有箭头
+      }
     }))
 
     graph.data({ nodes, edges })
