@@ -347,13 +347,29 @@ export const leftMenuConfig = [
             {
                 key: 'endocrine',
                 label: '内分泌治疗药物',
-                children: [
-                ],
+                children: [],
             },
             {
                 key: 'chemotherapy',
                 label: '化学治疗药物',
                 children: [
+                    {
+                        key: 'chemotherapy1',
+                        label: '氟达拉滨',
+                        content: {
+                            type: 'drugDetail',
+                            drugName: '氟达拉滨',
+                            detail: {
+                                "药物性质": "",
+                                "溶媒": "",
+                                "溶媒量（ml）": "",
+                                "浓度（mg/ml）": "",
+                                "输液时间（min）": "",
+                                "稳定性（h）": "",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
                 ],
             }
         ]
@@ -406,7 +422,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
 const { nodes: graphNodes, edges: graphEdges } = generateGraphNodes(leftMenuConfig)
 
 // 获取所有一级菜单节点的key（用于添加它们之间的连接）
-const level1Keys = leftMenuConfig.filter(item => !item.children || item.children.length === 0 || item.key === 'assessment' || item.key === 'drugCategory').map(item => item.key)
+const level1Keys = leftMenuConfig.map(item => item.key)
 
 // 添加一级菜单之间的连接（形成链路）
 const level1Edges = []

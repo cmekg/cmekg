@@ -46,31 +46,81 @@ const getNodeStyle = (node) => {
 }
 
 // 聚焦某个节点（居中并高亮）
+// 聚焦某个节点（居中并高亮）
 const focusNode = (nodeId) => {
-  if (!graph) return
-
-  const node = graph.findById(nodeId)
-  if (!node) return
-
-  try {
-    graph.focusItem(node, true, {
-      easing: 'easeCubic',
-      duration: 500,
-      animate: true
-    })
-  } catch (e) {
-    const model = node.getModel()
-    const width = graph.getWidth()
-    const height = graph.getHeight()
-    graph.moveTo(width / 2 - model.x, height / 2 - model.y)
+  if (!graph) {
+    console.warn('graph 未初始化')
+    return
   }
 
-  graph.setItemState(node, 'highlight', true)
-  setTimeout(() => {
-    if (graph && !graph.destroyed) {
-      graph.setItemState(node, 'highlight', false)
+  // 等待图谱渲染稳定后再聚焦
+  const tryFocus = () => {
+    let node = null
+
+    // 尝试通过 ID 查找
+    try {
+      node = graph.findById(nodeId)
+    } catch (e) {
+      console.warn('findById 失败', e)
     }
-  }, 3000)
+
+    // 如果找不到，遍历所有节点匹配 ID 或 name
+    if (!node) {
+      const nodes = graph.getNodes()
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i]
+        const model = n.getModel()
+        if (model.id === nodeId || model.name === nodeId) {
+          node = n
+          break
+        }
+      }
+    }
+
+    if (!node) {
+      console.warn('未找到节点:', nodeId)
+      // 如果找不到，可能是节点还没渲染完成，再试一次
+      setTimeout(tryFocus, 300)
+      return
+    }
+
+    const model = node.getModel()
+
+    // 清除之前的高亮
+    const nodes = graph.getNodes()
+    nodes.forEach(n => {
+      graph.setItemState(n, 'highlight', false)
+    })
+
+    // 高亮当前节点
+    graph.setItemState(node, 'highlight', true)
+
+    // 使用 focusItem 方法
+    try {
+      graph.focusItem(node, true, {
+        easing: 'easeCubic',
+        duration: 500,
+        animate: true
+      })
+    } catch (e) {
+      console.warn('focusItem 失败，尝试手动聚焦', e)
+      // 备选方案：手动移动画布
+      const width = graph.getWidth()
+      const height = graph.getHeight()
+      const group = graph.getGroup()
+      const matrix = group.getMatrix()
+      const zoom = matrix ? matrix[0] : 1
+
+      // 计算目标偏移
+      const targetX = width / 2 / zoom - model.x
+      const targetY = height / 2 / zoom - model.y
+
+      graph.moveTo(targetX, targetY)
+    }
+  }
+
+  // 延迟执行，确保画布稳定
+  setTimeout(tryFocus, 300)
 }
 
 // 创建图谱实例
