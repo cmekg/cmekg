@@ -48,7 +48,7 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import MenuPanel from './components/MenuPanel.vue'
 import KnowledgeGraph from './components/KnowledgeGraph.vue'
 import DetailPanel from './components/DetailPanel.vue'
-import { graphData as initialGraphData } from './data/mockData'
+import { graphData as initialGraphData, getMenuContentByKey } from './data/mockData'
 
 const graphData = ref(initialGraphData)
 const selectedMenuKey = ref(null)
@@ -81,6 +81,22 @@ const handleClearDetail = () => {
 }
 
 const handleSelectMenuItem = (menuKey) => {
+  // 检查是否有 content 数据
+  const content = getMenuContentByKey(menuKey)
+
+  if (!content) {
+    // 没有 content 数据，清空右侧详情，只聚焦图谱节点
+    selectedMenuKey.value = null  // 清空右侧详情
+    if (isMobile.value) {
+      rightOpen.value = false  // 手机端关闭右侧面板
+    }
+    if (graphRef.value && graphRef.value.focusNode) {
+      graphRef.value.focusNode(menuKey)
+    }
+    return
+  }
+
+  // 有 content 数据，正常显示右侧详情
   selectedMenuKey.value = menuKey
   if (isMobile.value) {
     rightOpen.value = true

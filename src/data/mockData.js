@@ -25,7 +25,6 @@ export const leftMenuConfig = [
         children: [],
         content: {
             type: 'drugDetail',
-            drugName: '利妥昔单抗',
             detail: {
                 "再次双人核对": "",
                 "遵循 WS/T 433—2023、T/CNAS 33—2023 的规定进行血管通路的建立、使用及维护。": "",
@@ -56,7 +55,6 @@ export const leftMenuConfig = [
         children: [],
         content: {
             type: 'drugDetail',
-            drugName: '利妥昔单抗',
             detail: {
                 "戴双层手套": "",
                 "戴口罩": "",
@@ -103,7 +101,6 @@ export const leftMenuConfig = [
                         label: '利妥昔单抗',
                         content: {
                             type: 'drugDetail',
-                            drugName: '利妥昔单抗',
                             detail: {
                                 "药物性质": "靶向",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -120,7 +117,6 @@ export const leftMenuConfig = [
                         label: '西妥昔单抗',
                         content: {
                             type: 'drugDetail',
-                            drugName: '西妥昔单抗',
                             detail: {
                                 "药物性质": "靶向",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -137,7 +133,6 @@ export const leftMenuConfig = [
                         label: '帕妥珠单抗',
                         content: {
                             type: 'drugDetail',
-                            drugName: '帕妥珠单抗',
                             detail: {
                                 "药物性质": "靶向",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -154,7 +149,6 @@ export const leftMenuConfig = [
                         label: '曲妥珠单抗',
                         content: {
                             type: 'drugDetail',
-                            drugName: '曲妥珠单抗',
                             detail: {
                                 "药物性质": "靶向",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -171,7 +165,6 @@ export const leftMenuConfig = [
                         label: '尼妥珠单抗',
                         content: {
                             type: 'drugDetail',
-                            drugName: '尼妥珠单抗',
                             detail: {
                                 "药物性质": "靶向",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -188,7 +181,6 @@ export const leftMenuConfig = [
                         label: '贝伐珠单抗',
                         content: {
                             type: 'drugDetail',
-                            drugName: '贝伐珠单抗',
                             detail: {
                                 "药物性质": "靶向",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -211,7 +203,6 @@ export const leftMenuConfig = [
                         label: '信迪利单抗',
                         content: {
                             type: 'drugDetail',
-                            drugName: '信迪利单抗',
                             detail: {
                                 "药物性质": "",
                                 "溶媒": "",
@@ -228,7 +219,6 @@ export const leftMenuConfig = [
                         label: '阿替利珠单抗',
                         content: {
                             type: 'drugDetail',
-                            drugName: '阿替利珠单抗',
                             detail: {
                                 "药物性质": "免疫检查点抑制剂",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -245,7 +235,6 @@ export const leftMenuConfig = [
                         label: '替雷利珠单抗',
                         content: {
                             type: 'drugDetail',
-                            drugName: '替雷利珠单抗',
                             detail: {
                                 "药物性质": "免疫检查点抑制剂",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -262,7 +251,6 @@ export const leftMenuConfig = [
                         label: '度伐利尤单抗',
                         content: {
                             type: 'drugDetail',
-                            drugName: '度伐利尤单抗',
                             detail: {
                                 "药物性质": "免疫检查点抑制剂",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -279,7 +267,6 @@ export const leftMenuConfig = [
                         label: '纳武利尤单抗',
                         content: {
                             type: 'drugDetail',
-                            drugName: '纳武利尤单抗',
                             detail: {
                                 "药物性质": "免疫检查点抑制剂",
                                 "溶媒": "0.9%氯化钠注射液 /5%葡萄糖注射液",
@@ -296,7 +283,6 @@ export const leftMenuConfig = [
                         label: '特瑞普利单抗',
                         content: {
                             type: 'drugDetail',
-                            drugName: '特瑞普利单抗',
                             detail: {
                                 "药物性质": "免疫检查点抑制剂",
                                 "溶媒": "0.9%氯化钠注射液",
@@ -313,7 +299,6 @@ export const leftMenuConfig = [
                         label: '帕博利珠单抗',
                         content: {
                             type: 'drugDetail',
-                            drugName: '帕博利珠单抗',
                             detail: {
                                 "药物性质": "免疫检查点抑制剂",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -330,7 +315,6 @@ export const leftMenuConfig = [
                         label: '卡瑞利珠单抗',
                         content: {
                             type: 'drugDetail',
-                            drugName: '卡瑞利珠单抗',
                             detail: {
                                 "药物性质": "免疫检查点抑制剂",
                                 "溶媒": "0.9%氯化钠注射液/5%葡萄糖注射液",
@@ -358,7 +342,166 @@ export const leftMenuConfig = [
                         label: '氟达拉滨',
                         content: {
                             type: 'drugDetail',
-                            drugName: '氟达拉滨',
+                            detail: {
+                                "药物性质": "",
+                                "溶媒": "",
+                                "溶媒量（ml）": "",
+                                "浓度（mg/ml）": "",
+                                "输液时间（min）": "",
+                                "稳定性（h）": "",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'chemotherapy2',
+                        label: '艾立布林',
+                        content: {
+                            type: 'drugDetail',
+                            detail: {
+                                "药物性质": "",
+                                "溶媒": "",
+                                "溶媒量（ml）": "",
+                                "浓度（mg/ml）": "",
+                                "输液时间（min）": "",
+                                "稳定性（h）": "",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'chemotherapy3',
+                        label: '紫杉醇脂质体',
+                        content: {
+                            type: 'drugDetail',
+                            detail: {
+                                "药物性质": "",
+                                "溶媒": "",
+                                "溶媒量（ml）": "",
+                                "浓度（mg/ml）": "",
+                                "输液时间（min）": "",
+                                "稳定性（h）": "",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'chemotherapy4',
+                        label: '紫杉醇注射液',
+                        content: {
+                            type: 'drugDetail',
+                            detail: {
+                                "药物性质": "",
+                                "溶媒": "",
+                                "溶媒量（ml）": "",
+                                "浓度（mg/ml）": "",
+                                "输液时间（min）": "",
+                                "稳定性（h）": "",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'chemotherapy5',
+                        label: '多西他赛',
+                        content: {
+                            type: 'drugDetail',
+                            detail: {
+                                "药物性质": "",
+                                "溶媒": "",
+                                "溶媒量（ml）": "",
+                                "浓度（mg/ml）": "",
+                                "输液时间（min）": "",
+                                "稳定性（h）": "",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'chemotherapy6',
+                        label: '长春瑞滨',
+                        content: {
+                            type: 'drugDetail',
+                            detail: {
+                                "药物性质": "",
+                                "溶媒": "",
+                                "溶媒量（ml）": "",
+                                "浓度（mg/ml）": "",
+                                "输液时间（min）": "",
+                                "稳定性（h）": "",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'chemotherapy7',
+                        label: '长春地辛',
+                        content: {
+                            type: 'drugDetail',
+                            detail: {
+                                "药物性质": "",
+                                "溶媒": "",
+                                "溶媒量（ml）": "",
+                                "浓度（mg/ml）": "",
+                                "输液时间（min）": "",
+                                "稳定性（h）": "",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'chemotherapy8',
+                        label: '优替德隆',
+                        content: {
+                            type: 'drugDetail',
+                            detail: {
+                                "药物性质": "",
+                                "溶媒": "",
+                                "溶媒量（ml）": "",
+                                "浓度（mg/ml）": "",
+                                "输液时间（min）": "",
+                                "稳定性（h）": "",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'chemotherapy9',
+                        label: '阿糖胞苷',
+                        content: {
+                            type: 'drugDetail',
+                            detail: {
+                                "药物性质": "",
+                                "溶媒": "",
+                                "溶媒量（ml）": "",
+                                "浓度（mg/ml）": "",
+                                "输液时间（min）": "",
+                                "稳定性（h）": "",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'chemotherapy10',
+                        label: '紫杉醇白蛋白',
+                        content: {
+                            type: 'drugDetail',
+                            detail: {
+                                "药物性质": "",
+                                "溶媒": "",
+                                "溶媒量（ml）": "",
+                                "浓度（mg/ml）": "",
+                                "输液时间（min）": "",
+                                "稳定性（h）": "",
+                                "注意事项": "/"
+                            }
+                        }
+                    },
+                    {
+                        key: 'chemotherapy11',
+                        label: '',
+                        content: {
+                            type: 'drugDetail',
                             detail: {
                                 "药物性质": "",
                                 "溶媒": "",
