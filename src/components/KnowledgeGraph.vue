@@ -171,12 +171,11 @@ const createGraph = () => {
       }
     },
     defaultEdge: {
-      type: 'line',
+      type: 'quadratic',        // 贝塞尔曲线
       style: {
         stroke: '#95a5a6',
-        lineWidth: 2,
-        lineAppendWidth: 4,
-        lineDash: []
+        lineWidth: 1.8,
+        lineAppendWidth: 4
       },
       labelCfg: {
         style: {
@@ -216,7 +215,7 @@ const createGraph = () => {
   renderGraph()
 }
 
-// 渲染图谱
+// 渲染图谱（随机贝塞尔曲线）
 const renderGraph = () => {
   if (!graph || isRendering) return
 
@@ -233,18 +232,25 @@ const renderGraph = () => {
       style: getNodeStyle(node)
     }))
 
-    const edges = props.graphData.edges.map(edge => ({
-      source: edge.source,
-      target: edge.target,
-      label: edge.label || '',
-      style: {
-        endArrow: edge.arrow !== false ? {
-          path: G6.Arrow.triangle(10, 8, 0),
-          fill: '#95a5a6',
-          stroke: '#95a5a6'
-        } : false
+    const edges = props.graphData.edges.map(edge => {
+      // 随机弯曲幅度：-50 到 50 之间的随机数
+      const curveOffset = (Math.random() - 0.5) * 100
+
+      return {
+        source: edge.source,
+        target: edge.target,
+        label: edge.label || '',
+        type: 'quadratic',
+        curveOffset: curveOffset,
+        style: {
+          endArrow: edge.arrow !== false ? {
+            path: G6.Arrow.triangle(8, 6, 0),
+            fill: '#95a5a6',
+            stroke: '#95a5a6'
+          } : false
+        }
       }
-    }))
+    })
 
     graph.data({ nodes, edges })
     graph.render()
@@ -264,6 +270,7 @@ const renderGraph = () => {
   }
 }
 
+// 监听数据变化
 watch(() => props.graphData, () => {
   if (graph && !isRendering) {
     renderGraph()
