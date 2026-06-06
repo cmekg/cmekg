@@ -7,9 +7,7 @@
           <template #title>
             <span>{{ item.label }}</span>
           </template>
-          <!-- 递归渲染子菜单 -->
           <template v-for="child in item.children" :key="child.key">
-            <!-- 如果子菜单还有子菜单（三级） -->
             <el-sub-menu v-if="child.children && child.children.length" :index="child.key">
               <template #title>
                 <span>{{ child.label }}</span>
@@ -18,13 +16,11 @@
                 {{ grandChild.label }}
               </el-menu-item>
             </el-sub-menu>
-            <!-- 二级菜单（无子菜单） -->
             <el-menu-item v-else :index="child.key">
               {{ child.label }}
             </el-menu-item>
           </template>
         </el-sub-menu>
-        <!-- 无子菜单的一级菜单 -->
         <el-menu-item v-else :index="item.key">
           <span>{{ item.label }}</span>
         </el-menu-item>
@@ -57,7 +53,6 @@ const handleMenuSelect = (index) => {
   border-right: none;
 }
 
-/* 一级菜单样式 */
 :deep(.el-sub-menu .el-sub-menu__title) {
   padding-left: 20px !important;
   font-weight: bold;
@@ -69,13 +64,11 @@ const handleMenuSelect = (index) => {
   font-weight: bold;
 }
 
-/* 二级菜单样式 */
 :deep(.el-menu--inline .el-menu-item) {
   padding-left: 40px !important;
   font-weight: normal;
 }
 
-/* 三级菜单样式 */
 :deep(.el-menu--inline .el-sub-menu .el-sub-menu__title) {
   padding-left: 40px !important;
   font-weight: normal;

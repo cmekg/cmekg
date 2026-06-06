@@ -5,6 +5,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import G6 from '@antv/g6'
+import { graphColors } from '@/data/mockData'
 
 const props = defineProps({
   graphData: {
@@ -20,11 +21,11 @@ const graphContainer = ref(null)
 let graph = null
 let isRendering = false
 
-// 节点颜色配置（按照层级）
+// 节点颜色配置（从 js 配置中读取）
 const getNodeColor = (node) => {
-  if (node.level === 1) return '#2c3e50'   // 一级菜单 - 深蓝灰
-  if (node.level === 2) return '#409eff'   // 二级菜单 - 蓝色
-  return '#67c23a'                          // 三级药物 - 绿色
+  if (node.level === 1) return graphColors.level1
+  if (node.level === 2) return graphColors.level2
+  return graphColors.level3
 }
 
 // 节点大小配置
@@ -38,7 +39,9 @@ const getNodeStyle = (node) => {
   return {
     fill: getNodeColor(node),
     stroke: '#fff',
-    lineWidth: 2
+    lineWidth: 2,
+    shadowBlur: 5,
+    shadowColor: 'rgba(0,0,0,0.2)'
   }
 }
 
@@ -104,7 +107,7 @@ const createGraph = () => {
     defaultNode: {
       type: 'circle',
       labelCfg: {
-        style: { fill: '#333', fontSize: 12 },
+        style: { fill: '#333', fontSize: 12, fontWeight: 'bold' },
         position: 'bottom',
         offset: 0
       }
@@ -135,7 +138,7 @@ const createGraph = () => {
   renderGraph()
 }
 
-// 渲染图谱（根据边的 arrow 属性设置箭头）
+// 渲染图谱
 const renderGraph = () => {
   if (!graph || isRendering) return
 
@@ -156,9 +159,8 @@ const renderGraph = () => {
       source: edge.source,
       target: edge.target,
       label: edge.label || '',
-      // 根据 arrow 属性决定是否有箭头，默认为 true（有箭头）
       style: {
-        endArrow: edge.arrow !== false  // 如果 arrow 为 false 则无箭头，否则有箭头
+        endArrow: edge.arrow !== false
       }
     }))
 
