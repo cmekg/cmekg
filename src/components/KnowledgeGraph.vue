@@ -5,7 +5,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import G6 from '@antv/g6'
-import { entityColors } from '@/data/mockData'
 
 const props = defineProps({
   graphData: {
@@ -14,15 +13,30 @@ const props = defineProps({
     default: () => ({ nodes: [], edges: [] })
   }
 })
-const emit = defineEmits(['node-click', 'clear'])
+
+const emit = defineEmits(['node-click'])
 
 const graphContainer = ref(null)
 let graph = null
 let isRendering = false
 
-const getNodeStyle = (type) => {
+// 节点颜色配置（按照层级）
+const getNodeColor = (node) => {
+  if (node.level === 1) return '#2c3e50'   // 一级菜单 - 深蓝灰
+  if (node.level === 2) return '#409eff'   // 二级菜单 - 蓝色
+  return '#67c23a'                          // 三级药物 - 绿色
+}
+
+// 节点大小配置
+const getNodeSize = (node) => {
+  if (node.level === 1) return 60
+  if (node.level === 2) return 50
+  return 45
+}
+
+const getNodeStyle = (node) => {
   return {
-    fill: entityColors[type] || '#999',
+    fill: getNodeColor(node),
     stroke: '#fff',
     lineWidth: 2
   }
@@ -56,11 +70,6 @@ const focusNode = (nodeId) => {
   }, 3000)
 }
 
-// 绑定事件（已完全禁用）
-const bindEvents = () => {
-  // 不绑定任何事件，点击图谱不会有任何反应
-}
-
 // 创建图谱实例
 const createGraph = () => {
   if (!graphContainer.value) return
@@ -83,13 +92,17 @@ const createGraph = () => {
     layout: {
       type: 'force',
       preventOverlap: true,
-      nodeSize: 50,
+      nodeSize: 60,
       linkDistance: 200,
-      nodeSpacing: 100
+      nodeSpacing: 100,
+      force: {
+        repulsion: 500,
+        gravity: 0.1,
+        edgeStrength: 0.5
+      }
     },
     defaultNode: {
       type: 'circle',
-      size: 50,
       labelCfg: {
         style: { fill: '#333', fontSize: 12 },
         position: 'bottom',
@@ -98,7 +111,7 @@ const createGraph = () => {
     },
     defaultEdge: {
       type: 'line',
-      style: { stroke: '#aaa', lineWidth: 1.5, endArrow: true },
+      style: { stroke: '#aaa', lineWidth: 1.5, endArrow: false },
       labelCfg: { style: { fill: '#666', fontSize: 9 }, autoRotate: true }
     },
     nodeStateStyles: {
@@ -113,7 +126,12 @@ const createGraph = () => {
     maxZoom: 3
   })
 
-  window.__g6_graph = graph
+  // 绑定节点点击事件
+  graph.on('node:click', (evt) => {
+    const node = evt.item.getModel()
+    emit('node-click', node)
+  })
+
   renderGraph()
 }
 
@@ -128,8 +146,10 @@ const renderGraph = () => {
       id: node.id,
       name: node.name,
       type: node.type,
+      level: node.level,
       label: node.name,
-      style: getNodeStyle(node.type)
+      size: getNodeSize(node),
+      style: getNodeStyle(node)
     }))
 
     const edges = props.graphData.edges.map(edge => ({
@@ -157,11 +177,11 @@ const renderGraph = () => {
 }
 
 // 监听数据变化
-watch([() => props.graphData.nodes.length, () => props.graphData.edges.length], () => {
+watch(() => props.graphData, () => {
   if (graph && !isRendering) {
-    createGraph()
+    renderGraph()
   }
-})
+}, { deep: true })
 
 const handleResize = () => {
   if (graph && graphContainer.value && !graph.destroyed) {

@@ -1,33 +1,30 @@
 <template>
   <el-container class="app-container">
     <el-header class="app-header">
-      <div class="logo">CMeKG 医学知识图谱</div>
+      <div class="logo">抗肿瘤静脉给药知识图谱</div>
     </el-header>
 
     <el-container>
-      <!-- 左侧面板 -->
+      <!-- 左侧菜单面板 -->
       <el-aside :width="leftWidth" class="left-aside" :class="{ 'mobile-open': leftOpen }">
         <div class="mobile-close" @click="leftOpen = false">✕</div>
-        <EntityPanel
-            :entities="allEntities"
-            @select-entity="handleSelectEntity"
-        />
+        <MenuPanel @select-item="handleSelectMenuItem" />
       </el-aside>
 
       <!-- 中间图谱区域 -->
       <el-main class="main-content">
         <KnowledgeGraph
             ref="graphRef"
-            :graph-data="currentGraphData"
+            :graph-data="graphData"
+            @node-click="handleNodeClick"
         />
-        <!-- 移动端浮动按钮 - 左侧 -->
+        <!-- 移动端浮动按钮 -->
         <div class="mobile-fab" @click="toggleLeftPanel">
           <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
             <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
           </svg>
         </div>
-        <!-- 移动端浮动按钮 - 右侧（有选中实体时才显示） -->
-        <div class="mobile-fab-right" @click="toggleRightPanel" v-if="selectedEntityId">
+        <div class="mobile-fab-right" @click="toggleRightPanel" v-if="selectedMenuKey">
           <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
             <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-7 7H3v4c0 1.1.9 2 2 2h4v-2H5v-4zM5 5h4V3H5c-1.1 0-2 .9-2 2v4h2V5zm14-2h-4v2h4v4h2V5c0-1.1-.9-2-2-2zm0 16h-4v2h4c1.1 0 2-.9 2-2v-4h-2v4z"/>
           </svg>
@@ -38,7 +35,7 @@
       <el-aside :width="rightWidth" class="right-aside" :class="{ 'mobile-open': rightOpen }">
         <div class="mobile-close" @click="rightOpen = false">✕</div>
         <DetailPanel
-            :entity-id="selectedEntityId"
+            :menu-key="selectedMenuKey"
             @clear="handleClearDetail"
         />
       </el-aside>
@@ -48,52 +45,53 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import EntityPanel from './components/EntityPanel.vue'
+import MenuPanel from './components/MenuPanel.vue'
 import KnowledgeGraph from './components/KnowledgeGraph.vue'
 import DetailPanel from './components/DetailPanel.vue'
-import { getAllEntities, graphData as initialGraphData } from './data/mockData'
+import { graphData as initialGraphData } from './data/mockData'
 
-const allEntities = ref({ diseases: [], drugs: [], symptoms: [] })
-const currentGraphData = ref({ nodes: [], edges: [] })
-const selectedEntityId = ref(null)
+const graphData = ref(initialGraphData)
+const selectedMenuKey = ref(null)
 const graphRef = ref(null)
 
-// 移动端状态
 const leftOpen = ref(false)
 const rightOpen = ref(false)
 const isMobile = ref(window.innerWidth <= 768)
 
 const leftWidth = computed(() => isMobile.value ? '0px' : '280px')
-
-// 右侧面板宽度：没有选中实体时为0，选中后根据设备显示宽度
 const rightWidth = computed(() => {
-  if (!selectedEntityId.value) return '0px'
+  if (!selectedMenuKey.value) return '0px'
   return isMobile.value ? '280px' : '320px'
 })
 
-// 清空详情面板
+// 点击图谱节点
+const handleNodeClick = (node) => {
+  selectedMenuKey.value = node.id
+  if (isMobile.value) {
+    rightOpen.value = true
+    leftOpen.value = false
+  }
+}
+
 const handleClearDetail = () => {
-  selectedEntityId.value = null
-  // 手机端关闭右侧面板
+  selectedMenuKey.value = null
   if (isMobile.value) {
     rightOpen.value = false
   }
 }
 
-// 选择左侧实体
-const handleSelectEntity = (entityId) => {
-  selectedEntityId.value = entityId
+const handleSelectMenuItem = (menuKey) => {
+  selectedMenuKey.value = menuKey
   if (isMobile.value) {
     rightOpen.value = true
     leftOpen.value = false
   }
-
+  // 聚焦图谱中的对应节点
   if (graphRef.value && graphRef.value.focusNode) {
-    graphRef.value.focusNode(entityId)
+    graphRef.value.focusNode(menuKey)
   }
 }
 
-// 移动端面板控制
 const toggleLeftPanel = () => {
   leftOpen.value = !leftOpen.value
   if (leftOpen.value) {
@@ -108,7 +106,6 @@ const toggleRightPanel = () => {
   }
 }
 
-// 监听窗口大小变化
 const handleResize = () => {
   isMobile.value = window.innerWidth <= 768
   if (!isMobile.value) {
@@ -118,8 +115,6 @@ const handleResize = () => {
 }
 
 onMounted(() => {
-  allEntities.value = getAllEntities()
-  currentGraphData.value = initialGraphData
   window.addEventListener('resize', handleResize)
 })
 
@@ -169,7 +164,6 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
-/* 移动端适配 */
 @media (max-width: 768px) {
   .left-aside {
     position: fixed !important;
@@ -183,32 +177,28 @@ onUnmounted(() => {
     transform: translateX(-100%);
     transition: transform 0.3s ease;
   }
-
   .left-aside.mobile-open {
     transform: translateX(0);
   }
-
   .right-aside {
     position: fixed !important;
     right: 0;
     top: 60px;
     bottom: 0;
+    width: 280px !important;
     z-index: 1000;
     background: white;
     box-shadow: -2px 0 8px rgba(0,0,0,0.15);
     transform: translateX(100%);
     transition: transform 0.3s ease;
   }
-
   .right-aside.mobile-open {
     transform: translateX(0);
   }
-
   .main-content {
     padding: 10px;
     width: 100%;
   }
-
   .mobile-close {
     display: block;
     position: absolute;
@@ -225,11 +215,6 @@ onUnmounted(() => {
     background: #f5f5f5;
     z-index: 1001;
   }
-
-  .mobile-close:hover {
-    background: #e0e0e0;
-  }
-
   .mobile-fab {
     position: fixed;
     bottom: 20px;
@@ -245,7 +230,6 @@ onUnmounted(() => {
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     z-index: 99;
   }
-
   .mobile-fab-right {
     position: fixed;
     bottom: 20px;
@@ -260,10 +244,6 @@ onUnmounted(() => {
     cursor: pointer;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     z-index: 99;
-  }
-
-  .mobile-fab:active, .mobile-fab-right:active {
-    opacity: 0.8;
   }
 }
 
