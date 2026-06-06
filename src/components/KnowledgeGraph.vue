@@ -30,41 +30,54 @@ const getNodeColor = (node) => {
 
 // 节点大小配置
 const getNodeSize = (node) => {
-  if (node.level === 1) return 60
-  if (node.level === 2) return 50
-  return 45
+  if (node.level === 1) return 75
+  if (node.level === 2) return 58
+  return 48
 }
 
+// 节点样式
 const getNodeStyle = (node) => {
-  return {
+  const baseStyle = {
     fill: getNodeColor(node),
     stroke: '#fff',
-    lineWidth: 2,
-    shadowBlur: 5,
-    shadowColor: 'rgba(0,0,0,0.2)'
+    lineWidth: 2.5,
+    shadowBlur: 15,
+    shadowColor: 'rgba(0,0,0,0.25)',
+    cursor: 'pointer',
+    opacity: 0.95
   }
+
+  if (node.level === 1) {
+    return {
+      ...baseStyle,
+      stroke: '#fff',
+      lineWidth: 3.5,
+      shadowBlur: 20,
+      shadowColor: 'rgba(231, 76, 60, 0.3)'
+    }
+  }
+  if (node.level === 2) {
+    return {
+      ...baseStyle,
+      stroke: '#f0f0f0',
+      lineWidth: 2.5,
+      shadowBlur: 12,
+      shadowColor: 'rgba(52, 152, 219, 0.25)'
+    }
+  }
+  return baseStyle
 }
 
 // 聚焦某个节点（居中并高亮）
-// 聚焦某个节点（居中并高亮）
 const focusNode = (nodeId) => {
-  if (!graph) {
-    console.warn('graph 未初始化')
-    return
-  }
+  if (!graph) return
 
-  // 等待图谱渲染稳定后再聚焦
   const tryFocus = () => {
     let node = null
-
-    // 尝试通过 ID 查找
     try {
       node = graph.findById(nodeId)
-    } catch (e) {
-      console.warn('findById 失败', e)
-    }
+    } catch (e) {}
 
-    // 如果找不到，遍历所有节点匹配 ID 或 name
     if (!node) {
       const nodes = graph.getNodes()
       for (let i = 0; i < nodes.length; i++) {
@@ -78,24 +91,17 @@ const focusNode = (nodeId) => {
     }
 
     if (!node) {
-      console.warn('未找到节点:', nodeId)
-      // 如果找不到，可能是节点还没渲染完成，再试一次
       setTimeout(tryFocus, 300)
       return
     }
 
     const model = node.getModel()
-
-    // 清除之前的高亮
     const nodes = graph.getNodes()
     nodes.forEach(n => {
       graph.setItemState(n, 'highlight', false)
     })
-
-    // 高亮当前节点
     graph.setItemState(node, 'highlight', true)
 
-    // 使用 focusItem 方法
     try {
       graph.focusItem(node, true, {
         easing: 'easeCubic',
@@ -103,23 +109,14 @@ const focusNode = (nodeId) => {
         animate: true
       })
     } catch (e) {
-      console.warn('focusItem 失败，尝试手动聚焦', e)
-      // 备选方案：手动移动画布
       const width = graph.getWidth()
       const height = graph.getHeight()
       const group = graph.getGroup()
       const matrix = group.getMatrix()
       const zoom = matrix ? matrix[0] : 1
-
-      // 计算目标偏移
-      const targetX = width / 2 / zoom - model.x
-      const targetY = height / 2 / zoom - model.y
-
-      graph.moveTo(targetX, targetY)
+      graph.moveTo(width / 2 / zoom - model.x, height / 2 / zoom - model.y)
     }
   }
-
-  // 延迟执行，确保画布稳定
   setTimeout(tryFocus, 300)
 }
 
@@ -145,41 +142,72 @@ const createGraph = () => {
     layout: {
       type: 'force',
       preventOverlap: true,
-      nodeSize: 60,
-      linkDistance: 200,
-      nodeSpacing: 100,
+      nodeSize: 90,
+      linkDistance: 280,
+      nodeSpacing: 150,
       force: {
-        repulsion: 500,
-        gravity: 0.1,
-        edgeStrength: 0.5
+        repulsion: 1200,
+        gravity: 0.05,
+        edgeStrength: 0.7,
+        nodeStrength: 0.6,
+        alpha: 0.8,
+        alphaMin: 0.01,
+        alphaDecay: 0.02,
+        velocityDecay: 0.4
       }
     },
     defaultNode: {
       type: 'circle',
       labelCfg: {
-        style: { fill: '#333', fontSize: 12, fontWeight: 'bold' },
+        style: {
+          fill: '#2c3e50',
+          fontSize: 13,
+          fontWeight: 'bold',
+          fontFamily: 'Microsoft YaHei, "PingFang SC", "Helvetica Neue", Arial, sans-serif',
+          textShadow: '0 1px 1px rgba(255,255,255,0.5)'
+        },
         position: 'bottom',
-        offset: 0
+        offset: 10
       }
     },
     defaultEdge: {
       type: 'line',
-      style: { stroke: '#aaa', lineWidth: 1.5 },
-      labelCfg: { style: { fill: '#666', fontSize: 9 }, autoRotate: true }
+      style: {
+        stroke: '#95a5a6',
+        lineWidth: 2,
+        lineAppendWidth: 4,
+        lineDash: []
+      },
+      labelCfg: {
+        style: {
+          fill: '#7f8c8d',
+          fontSize: 10,
+          fontWeight: 'normal',
+          background: {
+            fill: 'rgba(255,255,255,0.9)',
+            padding: [2, 6, 2, 6],
+            radius: 12,
+            shadowBlur: 4,
+            shadowColor: 'rgba(0,0,0,0.1)'
+          }
+        },
+        autoRotate: true,
+        offset: 15
+      }
     },
     nodeStateStyles: {
       highlight: {
-        stroke: '#f00',
-        lineWidth: 3,
-        shadowBlur: 10,
-        shadowColor: '#f00'
+        stroke: '#e74c3c',
+        lineWidth: 5,
+        shadowBlur: 25,
+        shadowColor: '#e74c3c',
+        fill: '#ff8a8a'
       }
     },
-    minZoom: 0.3,
-    maxZoom: 3
+    minZoom: 0.2,
+    maxZoom: 5
   })
 
-  // 绑定节点点击事件
   graph.on('node:click', (evt) => {
     const node = evt.item.getModel()
     emit('node-click', node)
@@ -210,7 +238,11 @@ const renderGraph = () => {
       target: edge.target,
       label: edge.label || '',
       style: {
-        endArrow: edge.arrow !== false
+        endArrow: edge.arrow !== false ? {
+          path: G6.Arrow.triangle(10, 8, 0),
+          fill: '#95a5a6',
+          stroke: '#95a5a6'
+        } : false
       }
     }))
 
@@ -221,8 +253,8 @@ const renderGraph = () => {
       try {
         graph.layout()
         setTimeout(() => {
-          graph.fitView(20, undefined, undefined, [20, 20, 20, 20])
-        }, 800)
+          graph.fitView(40, undefined, undefined, [40, 40, 40, 40])
+        }, 900)
       } catch (e) {}
     }, 100)
   } catch (e) {
@@ -232,7 +264,6 @@ const renderGraph = () => {
   }
 }
 
-// 监听数据变化
 watch(() => props.graphData, () => {
   if (graph && !isRendering) {
     renderGraph()
@@ -246,15 +277,14 @@ const handleResize = () => {
     if (width > 0 && height > 0) {
       try {
         graph.changeSize(width, height)
+        setTimeout(() => graph.fitView(40), 100)
       } catch (e) {}
     }
   }
 }
 
 onMounted(() => {
-  nextTick(() => {
-    createGraph()
-  })
+  nextTick(() => createGraph())
   window.addEventListener('resize', handleResize)
 })
 
@@ -266,9 +296,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize)
 })
 
-defineExpose({
-  focusNode
-})
+defineExpose({ focusNode })
 </script>
 
 <style scoped>
@@ -276,9 +304,41 @@ defineExpose({
   width: 100%;
   height: 100%;
   min-height: 500px;
-  background-color: #f5f7fa;
-  border-radius: 8px;
+  background: radial-gradient(ellipse at 30% 40%, #e8edf5 0%, #dce3ec 100%);
+  border-radius: 12px;
   overflow: hidden;
   touch-action: none;
+  position: relative;
+  box-shadow: inset 0 0 60px rgba(44, 62, 80, 0.08), 0 4px 20px rgba(0,0,0,0.05);
+}
+
+/* 添加装饰性网格点阵 */
+.graph-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+      radial-gradient(circle at 25% 40%, rgba(100, 100, 120, 0.03) 2px, transparent 2px),
+      radial-gradient(circle at 75% 80%, rgba(100, 100, 120, 0.03) 1.5px, transparent 1.5px);
+  background-size: 40px 40px, 25px 25px;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 12px;
+}
+
+/* 光晕效果 */
+.graph-container::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(ellipse at 30% 40%, rgba(64, 158, 255, 0.02) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
 }
 </style>

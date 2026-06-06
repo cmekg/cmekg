@@ -66,6 +66,23 @@ const rightWidth = computed(() => {
 
 // 点击图谱节点
 const handleNodeClick = (node) => {
+  // 检查节点对应的菜单项是否有 content 数据
+  const content = getMenuContentByKey(node.id)
+
+  if (!content) {
+    // 没有 content，关闭右侧详情，只聚焦节点
+    console.log('节点无内容，关闭右侧并聚焦:', node.name)
+    selectedMenuKey.value = null  // 清空右侧详情
+    if (isMobile.value) {
+      rightOpen.value = false  // 手机端关闭右侧面板
+    }
+    if (graphRef.value && graphRef.value.focusNode) {
+      graphRef.value.focusNode(node.id)
+    }
+    return
+  }
+
+  // 有 content，正常显示右侧详情
   selectedMenuKey.value = node.id
   if (isMobile.value) {
     rightOpen.value = true
