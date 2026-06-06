@@ -157,15 +157,22 @@ onUnmounted(() => {
 </script>
 
 <style>
+<style>
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+body {
+  overflow: hidden;
+}
+
 .app-container {
   height: 100vh;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .app-header {
@@ -176,6 +183,7 @@ onUnmounted(() => {
   justify-content: center;
   padding: 0 20px;
   height: 60px !important;
+  flex-shrink: 0;
 }
 
 .logo {
@@ -183,11 +191,18 @@ onUnmounted(() => {
   font-weight: bold;
 }
 
+/* 主容器 - 占满剩余空间 */
+.el-container:nth-child(2) {
+  flex: 1;
+  overflow: hidden;
+}
+
 .left-aside, .right-aside {
   background-color: #fff;
   border-right: 1px solid #e4e7ed;
   transition: all 0.3s ease;
-  overflow-y: auto;
+  overflow: hidden;  /* 让内部组件自己滚动 */
+  height: 100%;
 }
 
 .main-content {
@@ -209,6 +224,7 @@ onUnmounted(() => {
     box-shadow: 2px 0 8px rgba(0,0,0,0.15);
     transform: translateX(-100%);
     transition: transform 0.3s ease;
+    overflow-y: auto !important;  /* 移动端需要滚动 */
   }
   .left-aside.mobile-open {
     transform: translateX(0);
@@ -224,6 +240,7 @@ onUnmounted(() => {
     box-shadow: -2px 0 8px rgba(0,0,0,0.15);
     transform: translateX(100%);
     transition: transform 0.3s ease;
+    overflow-y: auto !important;  /* 移动端需要滚动 */
   }
   .right-aside.mobile-open {
     transform: translateX(0);
