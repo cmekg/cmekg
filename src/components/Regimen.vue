@@ -15,6 +15,10 @@
         <div class="regimen-body">
           <div class="regimen-grid">
             <div class="grid-item">
+              <span class="grid-label">名称：</span>
+              <span class="grid-value">{{ regimen.name || '' }}</span>
+            </div>
+            <div class="grid-item">
               <span class="grid-label">应用：</span>
               <span class="grid-value">{{ regimen.indication || '' }}</span>
             </div>

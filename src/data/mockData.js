@@ -788,8 +788,8 @@ const leftMenuConfig = [
                                 },
                                 drugs: "多柔比星、长春新碱、环磷酰胺",
                                 usage: "多柔比星→长春新碱→环磷酰胺",
-                                usageReason: "淋巴瘤",
-                                indication: ""
+                                usageReason: "",
+                                indication: "淋巴瘤"
                             },
                             {
                                 name: "TAC方案",
@@ -839,6 +839,61 @@ const leftMenuConfig = [
                                 usage: "顺铂→氟尿嘧啶",
                                 usageReason: "原因：1.增强化疗药物抗癌效果：顺铂增加细胞内还原性叶酸的水平，并抑制蛋氨酸的摄取，从而增强氟尿嘧啶对其靶点——胸苷酸合成酶的抑制作用，产生协同抗癌效果。必须先给顺铂，才能为氟尿嘧啶创造更好的作用环境。2.保护肾功能：顺铂具有肾毒性，需要充分水化、利尿来保护肾脏。顺铂先输注，可以确保有充足的时间进行水化，并观察患者的耐受情况。",
                                 indication: "胃癌、宫颈癌、乳腺癌、肺腺癌"
+                            },
+                            {
+                                name: "IP方案",
+                                pretreatment: {
+                                    "止吐药": "①甲氧氯普胺（胃复安）<br>②雷尼替丁/西咪替丁<br>③福沙匹坦/帕洛司琼/昂丹司琼等",
+                                    "抗过敏药": "①地塞米松<br>②异丙嗪（非那根）",
+                                },
+                                drugs: "",
+                                usage: "",
+                                usageReason: "",
+                                indication: ""
+                            },
+                            {
+                                name: "",
+                                pretreatment: {
+                                    "止吐药": "",
+                                    "抗过敏药": "",
+                                },
+                                drugs: "",
+                                usage: "",
+                                usageReason: "",
+                                indication: ""
+                            },
+                            {
+                                name: "",
+                                pretreatment: {
+                                    "止吐药": "",
+                                    "抗过敏药": "",
+                                },
+                                drugs: "",
+                                usage: "",
+                                usageReason: "",
+                                indication: ""
+                            },
+                            {
+                                name: "",
+                                pretreatment: {
+                                    "止吐药": "",
+                                    "抗过敏药": "",
+                                },
+                                drugs: "",
+                                usage: "",
+                                usageReason: "",
+                                indication: ""
+                            },
+                            {
+                                name: "",
+                                pretreatment: {
+                                    "止吐药": "",
+                                    "抗过敏药": "",
+                                },
+                                drugs: "",
+                                usage: "",
+                                usageReason: "",
+                                indication: ""
                             }
                         ]
                     },
