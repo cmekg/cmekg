@@ -61,7 +61,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { leftMenuConfig } from '@/data/mockData'
+import leftMenuConfig from '@/data/mockData'
 
 const emit = defineEmits(['select-item'])
 const activeKey = ref('definition')

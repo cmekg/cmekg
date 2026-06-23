@@ -37,9 +37,13 @@
         <DetailPanel
             :menu-key="selectedMenuKey"
             @clear="handleClearDetail"
+            @open-regimens="handleOpenRegimens"
         />
       </el-aside>
     </el-container>
+
+    <!-- 化疗方案弹窗 - 放在 App 最外层，不受右侧面板遮挡 -->
+    <Regimen ref="regimensDialogRef" :regimens="dialogRegimens" />
   </el-container>
 </template>
 
@@ -48,11 +52,14 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import MenuPanel from './components/MenuPanel.vue'
 import KnowledgeGraph from './components/KnowledgeGraph.vue'
 import DetailPanel from './components/DetailPanel.vue'
+import Regimen from './components/Regimen.vue'
 import { graphData as initialGraphData, getMenuContentByKey } from './data/mockData'
 
 const graphData = ref(initialGraphData)
 const selectedMenuKey = ref(null)
 const graphRef = ref(null)
+const regimensDialogRef = ref(null)
+const dialogRegimens = ref([])
 
 const leftOpen = ref(false)
 const rightOpen = ref(false)
@@ -64,6 +71,14 @@ const rightWidth = computed(() => {
   return isMobile.value ? '280px' : '320px'
 })
 
+// 打开化疗方案弹窗
+const handleOpenRegimens = (regimens) => {
+  dialogRegimens.value = regimens
+  if (regimensDialogRef.value) {
+    regimensDialogRef.value.open()
+  }
+}
+
 // 点击图谱节点
 const handleNodeClick = (node) => {
   // 检查节点对应的菜单项是否有 content 数据
@@ -71,7 +86,6 @@ const handleNodeClick = (node) => {
 
   if (!content) {
     // 没有 content，关闭右侧详情，只聚焦节点
-    console.log('节点无内容，关闭右侧并聚焦:', node.name)
     selectedMenuKey.value = null  // 清空右侧详情
     if (isMobile.value) {
       rightOpen.value = false  // 手机端关闭右侧面板

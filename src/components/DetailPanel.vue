@@ -19,10 +19,22 @@
           <div v-else-if="currentContent.type === 'drugDetail'" class="drug-detail">
             <div v-for="(value, key) in currentContent.detail" :key="key" class="detail-row">
               <div class="detail-label">{{ key }}</div>
-              <!-- 使用 v-html 支持 HTML 标签换行 -->
               <div class="detail-value" v-html="formatDetailValue(value)"></div>
             </div>
           </div>
+        </div>
+
+        <!-- 底部：只有存在 regimen 且有数据时才显示按钮 -->
+        <div v-if="currentRegimens && currentRegimens.length > 0" class="detail-footer">
+          <el-button
+              type="primary"
+              plain
+              size="default"
+              @click="openRegimensDialog"
+              style="width: 100%"
+          >
+            📋 常见化疗方案（{{ currentRegimens.length }}个）：点击查看
+          </el-button>
         </div>
       </div>
     </div>
@@ -35,28 +47,46 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { getMenuContentByKey, findMenuTitleByKey } from '@/data/mockData'
+import { getMenuContentByKey, findMenuTitleByKey, leftMenuConfig } from '@/data/mockData'
 
 const props = defineProps({
   menuKey: { type: String, default: null }
 })
-const emit = defineEmits(['clear'])
+const emit = defineEmits(['clear', 'open-regimens'])
 
 const currentContent = ref(null)
 const currentTitle = ref('')
+const currentRegimens = ref([])
 
-// 格式化详情值，将字符串中的 \n 和 <br> 转换为 HTML 换行
+// 递归查找 regimen
+const findRegimens = (items, key) => {
+  for (const item of items) {
+    if (item.key === key) {
+      return item.regimen || []
+    }
+    if (item.children && item.children.length) {
+      const found = findRegimens(item.children, key)
+      if (found && found.length) return found
+    }
+  }
+  return []
+}
+
+// 格式化详情值
 const formatDetailValue = (value) => {
   if (!value) return ''
   if (typeof value !== 'string') return value
-
-  // 将 \n 替换为 <br>，并保持已有的 <br> 标签
   return value.replace(/\n/g, '<br>')
+}
+
+const openRegimensDialog = () => {
+  emit('open-regimens', currentRegimens.value)
 }
 
 const clearContent = () => {
   currentContent.value = null
   currentTitle.value = ''
+  currentRegimens.value = []
   emit('clear')
 }
 
@@ -64,17 +94,21 @@ watch(() => props.menuKey, (newKey) => {
   if (newKey) {
     const title = findMenuTitleByKey(newKey)
     const content = getMenuContentByKey(newKey)
+    const regimens = findRegimens(leftMenuConfig, newKey)
 
     if (title && content) {
       currentTitle.value = title
       currentContent.value = content
+      currentRegimens.value = regimens || []
     } else {
       currentContent.value = null
       currentTitle.value = ''
+      currentRegimens.value = []
     }
   } else {
     currentContent.value = null
     currentTitle.value = ''
+    currentRegimens.value = []
   }
 }, { immediate: true })
 </script>
@@ -86,6 +120,14 @@ watch(() => props.menuKey, (newKey) => {
   overflow-y: auto;
   background-color: #fff;
   border-left: 1px solid #e4e7ed;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .detail-header {
@@ -95,6 +137,7 @@ watch(() => props.menuKey, (newKey) => {
   margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 2px solid #e4e7ed;
+  flex-shrink: 0;
 }
 
 .detail-header h3 {
@@ -118,6 +161,11 @@ watch(() => props.menuKey, (newKey) => {
 .close-btn:hover {
   background-color: #f0f0f0;
   color: #f56c6c;
+}
+
+.detail-section {
+  flex: 1;
+  overflow-y: auto;
 }
 
 .detail-item {
@@ -151,16 +199,24 @@ watch(() => props.menuKey, (newKey) => {
   font-size: 13px;
 }
 
+.detail-footer {
+  flex-shrink: 0;
+  padding-top: 16px;
+  border-top: 1px solid #e8eef3;
+  margin-top: 12px;
+}
+
 .empty-detail {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
   min-height: 400px;
+  flex: 1;
 }
 
-/* 列表样式 */
-.detail-value ul, .detail-value ol {
+.detail-value ul,
+.detail-value ol {
   margin: 0;
   padding-left: 20px;
 }
