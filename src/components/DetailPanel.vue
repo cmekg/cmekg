@@ -8,7 +8,8 @@
         </div>
       </div>
 
-      <div class="detail-section">
+      <!-- 详情内容 - 可滚动区域 -->
+      <div class="detail-scroll">
         <div class="detail-item">
           <!-- 普通静态文本 -->
           <div v-if="currentContent.type === 'static'" class="detail-value">
@@ -24,7 +25,7 @@
           </div>
         </div>
 
-        <!-- 底部：只有存在 regimen 且有数据时才显示按钮 -->
+        <!-- 底部按钮 - 固定在底部 -->
         <div v-if="currentRegimens && currentRegimens.length > 0" class="detail-footer">
           <el-button
               type="primary"
@@ -116,26 +117,28 @@ watch(() => props.menuKey, (newKey) => {
 <style scoped>
 .detail-panel {
   height: 100%;
-  padding: 20px;
-  overflow-y: auto;
+  padding: 16px;
   background-color: #fff;
   border-left: 1px solid #e4e7ed;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .detail-content {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .detail-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
   border-bottom: 2px solid #e4e7ed;
   flex-shrink: 0;
 }
@@ -143,7 +146,7 @@ watch(() => props.menuKey, (newKey) => {
 .detail-header h3 {
   margin: 0;
   color: #2c3e50;
-  font-size: 18px;
+  font-size: 17px;
 }
 
 .close-btn {
@@ -156,6 +159,7 @@ watch(() => props.menuKey, (newKey) => {
   color: #909399;
   background: transparent;
   border: none;
+  flex-shrink: 0;
 }
 
 .close-btn:hover {
@@ -163,13 +167,14 @@ watch(() => props.menuKey, (newKey) => {
   color: #f56c6c;
 }
 
-.detail-section {
+.detail-scroll {
   flex: 1;
   overflow-y: auto;
+  min-height: 50px;
 }
 
 .detail-item {
-  padding: 16px;
+  padding: 14px;
   background-color: #f8f9fa;
   border-radius: 8px;
 }
@@ -178,11 +183,12 @@ watch(() => props.menuKey, (newKey) => {
   font-size: 14px;
   color: #606266;
   line-height: 1.8;
+  word-break: break-word;
 }
 
 .detail-row {
-  margin-bottom: 14px;
-  padding-bottom: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
   border-bottom: 1px solid #e8eef3;
 }
 
@@ -195,15 +201,26 @@ watch(() => props.menuKey, (newKey) => {
 .detail-label {
   font-weight: bold;
   color: #409eff;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-size: 13px;
 }
 
 .detail-footer {
   flex-shrink: 0;
-  padding-top: 16px;
+  padding-top: 12px;
   border-top: 1px solid #e8eef3;
-  margin-top: 12px;
+  margin-top: 8px;
+  background-color: #fff;
+}
+
+.detail-footer .el-button {
+  font-size: 14px;
+  padding: 10px 16px;
+  height: auto;
+  min-height: 40px;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.4;
 }
 
 .empty-detail {
@@ -211,17 +228,23 @@ watch(() => props.menuKey, (newKey) => {
   align-items: center;
   justify-content: center;
   height: 100%;
-  min-height: 400px;
   flex: 1;
 }
 
-.detail-value ul,
-.detail-value ol {
-  margin: 0;
-  padding-left: 20px;
-}
-
-.detail-value li {
-  margin-bottom: 4px;
+@media (max-width: 768px) {
+  .detail-panel {
+    padding: 12px;
+  }
+  .detail-header h3 {
+    font-size: 15px;
+  }
+  .detail-item {
+    padding: 10px;
+  }
+  .detail-footer .el-button {
+    font-size: 13px;
+    padding: 8px 12px;
+    min-height: 36px;
+  }
 }
 </style>

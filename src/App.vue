@@ -211,11 +211,10 @@ body {
 }
 
 .left-aside, .right-aside {
-  background-color: #fff;
-  border-right: 1px solid #e4e7ed;
-  transition: all 0.3s ease;
-  overflow: hidden;  /* 让内部组件自己滚动 */
   height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .main-content {
