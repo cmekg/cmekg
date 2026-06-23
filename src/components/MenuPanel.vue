@@ -82,7 +82,7 @@ const getAllMenuItems = () => {
       level: node.children ? 1 : (node.parent ? 2 : 1)
     })
 
-    // 如果节点有 regimen（化疗方案），提取方案名称和适应症
+    // 如果节点有 regimen（化疗方案），提取方案名称和应用
     if (node.regimen && Array.isArray(node.regimen) && node.regimen.length > 0) {
       node.regimen.forEach((reg, index) => {
         if (reg.name) {
@@ -96,7 +96,7 @@ const getAllMenuItems = () => {
           })
         }
         if (reg.indication) {
-          // 将适应症中的每个关键词也作为可搜索项
+          // 将应用中的每个关键词也作为可搜索项
           const indications = reg.indication.split(/[、，,、\s]+/).filter(s => s.trim())
           indications.forEach((ind, idx) => {
             items.push({
