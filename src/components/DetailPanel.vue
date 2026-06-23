@@ -182,13 +182,13 @@ watch(() => props.menuKey, (newKey) => {
 .detail-value {
   font-size: 14px;
   color: #606266;
-  line-height: 1.8;
+  line-height: 1.5;
   word-break: break-word;
 }
 
 .detail-row {
-  margin-bottom: 12px;
-  padding-bottom: 8px;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
   border-bottom: 1px solid #e8eef3;
 }
 
@@ -201,7 +201,7 @@ watch(() => props.menuKey, (newKey) => {
 .detail-label {
   font-weight: bold;
   color: #409eff;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
   font-size: 13px;
 }
 
