@@ -68,17 +68,51 @@ const activeKey = ref('definition')
 const searchText = ref('')
 const searchResults = ref([])
 
-// 递归获取所有菜单项（扁平化）
+// 递归获取所有菜单项（扁平化），同时提取 regimen 信息
 const getAllMenuItems = () => {
   const items = []
   const traverse = (node, path = '') => {
     const currentPath = path ? `${path} > ${node.label}` : node.label
+
+    // 添加当前节点
     items.push({
       key: node.key,
       name: node.label,
       path: currentPath,
       level: node.children ? 1 : (node.parent ? 2 : 1)
     })
+
+    // 如果节点有 regimen（化疗方案），提取方案名称和适应症
+    if (node.regimen && Array.isArray(node.regimen) && node.regimen.length > 0) {
+      node.regimen.forEach((reg, index) => {
+        if (reg.name) {
+          items.push({
+            key: `${node.key}-regimen-${index}`,
+            name: reg.name,
+            path: `${currentPath} > ${reg.name}`,
+            level: 3,
+            isRegimen: true,
+            parentKey: node.key
+          })
+        }
+        if (reg.indication) {
+          // 将适应症中的每个关键词也作为可搜索项
+          const indications = reg.indication.split(/[、，,、\s]+/).filter(s => s.trim())
+          indications.forEach((ind, idx) => {
+            items.push({
+              key: `${node.key}-regimen-indication-${index}-${idx}`,
+              name: ind.trim(),
+              path: `${currentPath} > ${reg.name} > 应用: ${ind.trim()}`,
+              level: 3,
+              isIndication: true,
+              parentKey: node.key,
+              regimenName: reg.name
+            })
+          })
+        }
+      })
+    }
+
     if (node.children) {
       node.children.forEach(child => traverse(child, currentPath))
     }
@@ -105,7 +139,12 @@ const handleSearch = () => {
 const handleResultClick = (item) => {
   searchText.value = ''
   searchResults.value = []
-  handleItemClick(item.key)
+  // 如果是 regimen 或 indication，跳转到父菜单
+  if (item.isRegimen || item.isIndication) {
+    handleItemClick(item.parentKey)
+  } else {
+    handleItemClick(item.key)
+  }
 }
 
 // 递归过滤菜单（只显示匹配的项）
@@ -142,6 +181,7 @@ const handleItemClick = (key) => {
 </script>
 
 <style scoped>
+/* ... 样式保持不变 ... */
 .menu-panel {
   height: 100%;
   display: flex;
