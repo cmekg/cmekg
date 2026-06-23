@@ -164,7 +164,7 @@ defineExpose({
   flex-shrink: 0;
   white-space: nowrap;
   line-height: 1.8;
-  width: 85px;
+  width: 145px;
   text-align: right;
   padding-right: 12px;
 }
