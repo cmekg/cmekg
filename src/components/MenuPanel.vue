@@ -117,16 +117,11 @@ const filteredMenuConfig = computed(() => {
   const filterItems = (items) => {
     const result = []
     for (const item of items) {
-      // 检查当前项是否匹配
       const matches = item.label.toLowerCase().includes(keyword)
-
-      // 递归过滤子项
       let filteredChildren = []
       if (item.children && item.children.length) {
         filteredChildren = filterItems(item.children)
       }
-
-      // 如果当前项匹配或有匹配的子项，则保留
       if (matches || filteredChildren.length > 0) {
         result.push({
           ...item,
@@ -218,31 +213,44 @@ const handleItemClick = (key) => {
 
 /* 一级菜单样式 */
 :deep(.el-sub-menu .el-sub-menu__title) {
-  padding-left: 20px !important;
+  padding-left: 16px !important;
   font-weight: bold;
   background-color: #fff;
+  height: 44px !important;
+  line-height: 44px !important;
 }
 
 :deep(.el-menu-item) {
-  padding-left: 20px !important;
+  padding-left: 16px !important;
   font-weight: bold;
+  height: 44px !important;
+  line-height: 44px !important;
 }
 
+/* 二级菜单样式 */
 :deep(.el-menu--inline .el-menu-item) {
-  padding-left: 40px !important;
+  padding-left: 32px !important;
   font-weight: normal;
+  height: 38px !important;
+  line-height: 38px !important;
 }
 
+/* 三级菜单样式 */
 :deep(.el-menu--inline .el-sub-menu .el-sub-menu__title) {
-  padding-left: 40px !important;
+  padding-left: 32px !important;
   font-weight: normal;
   background-color: #fafafa;
+  height: 38px !important;
+  line-height: 38px !important;
 }
 
 :deep(.el-menu--inline .el-sub-menu .el-menu-item) {
-  padding-left: 60px !important;
+  padding-left: 48px !important;
   font-weight: normal;
   background-color: #f5f7fa;
+  height: 36px !important;
+  line-height: 36px !important;
+  font-size: 13px;
 }
 
 :deep(.el-menu-item:hover) {
