@@ -42,7 +42,7 @@
                     class="pretreatment-category"
                 >
                   <span class="category-label">{{ category }}：</span>
-                  <span class="category-content" v-html="formatPretreatmentValue(value)"></span>
+                  <span class="category-content" v-html="value"></span>
                 </div>
               </div>
             </div>
@@ -67,15 +67,6 @@ const props = defineProps({
 })
 
 const visible = ref(false)
-
-const formatPretreatmentValue = (value) => {
-  if (!value) return ''
-  if (typeof value === 'string') {
-    // 在 ②、③ 前面加换行，保留 ① 在行首
-    return value.replace(/(②|③)/g, '<br>$1')
-  }
-  return value
-}
 
 const open = () => {
   visible.value = true
@@ -182,5 +173,13 @@ defineExpose({
   color: #606266;
   line-height: 1.8;
   word-break: break-word;
+}
+</style>
+
+<style>
+/* 全局样式 - 供 v-html 渲染的内容使用 */
+.reason-text {
+  color: #909399 !important;
+  font-size: 13px !important;
 }
 </style>
