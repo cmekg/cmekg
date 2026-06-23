@@ -85,8 +85,7 @@
 
               <div class="grid-item">
                 <span class="grid-label">用药顺序：</span>
-                <span class="grid-value">
-                  {{ regimen.usage || '' }}
+                <span class="grid-value">{{ regimen.usage || '' }}
                   <span v-if="regimen.usageReason" class="regimen-reason">（{{ regimen.usageReason }}）</span>
                 </span>
               </div>
