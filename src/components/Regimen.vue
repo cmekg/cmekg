@@ -8,7 +8,7 @@
   >
     <div class="regimens-container">
       <!-- 标签切换 -->
-      <el-tabs v-model="activeTab" class="regimen-tabs" v-if="regimens.length > 1">
+      <el-tabs v-model="activeTab" class="regimen-tabs" v-if="regimens.length > 0">
         <el-tab-pane
             v-for="(regimen, index) in regimens"
             :key="index"
@@ -32,14 +32,6 @@
                   <span class="grid-value">{{ regimen.drugs || '' }}</span>
                 </div>
 
-                <div class="grid-item">
-                  <span class="grid-label">用药顺序：</span>
-                  <span class="grid-value">
-                    {{ regimen.usage || '' }}
-                    <span v-if="regimen.usageReason" class="regimen-reason">（{{ regimen.usageReason }}）</span>
-                  </span>
-                </div>
-
                 <!-- 预处理 -->
                 <div v-if="regimen.pretreatment" class="grid-item pretreatment-item">
                   <span class="grid-label pretreatment-label">预处理：</span>
@@ -54,60 +46,19 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="grid-item">
+                  <span class="grid-label">用药顺序：</span>
+                  <span class="grid-value">
+                    {{ regimen.usage || '' }}
+                    <span v-if="regimen.usageReason" class="regimen-reason">（{{ regimen.usageReason }}）</span>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </el-tab-pane>
       </el-tabs>
-
-      <!-- 只有一个方案时，直接显示（无标签） -->
-      <div v-else>
-        <div
-            v-for="(regimen, index) in regimens"
-            :key="index"
-            class="regimen-card"
-        >
-          <div class="regimen-body">
-            <div class="regimen-grid">
-              <div class="grid-item">
-                <span class="grid-label">名称：</span>
-                <span class="grid-value">{{ regimen.name || '' }}</span>
-              </div>
-              <div class="grid-item">
-                <span class="grid-label">应用：</span>
-                <span class="grid-value">{{ regimen.indication || '' }}</span>
-              </div>
-
-              <div class="grid-item">
-                <span class="grid-label">化疗药物：</span>
-                <span class="grid-value">{{ regimen.drugs || '' }}</span>
-              </div>
-
-              <div class="grid-item">
-                <span class="grid-label">用药顺序：</span>
-                <span class="grid-value">{{ regimen.usage || '' }}
-                  <span v-if="regimen.usageReason" class="regimen-reason">（{{ regimen.usageReason }}）</span>
-                </span>
-              </div>
-
-              <!-- 预处理 -->
-              <div v-if="regimen.pretreatment" class="grid-item pretreatment-item">
-                <span class="grid-label pretreatment-label">预处理：</span>
-                <div class="pretreatment-group">
-                  <div
-                      v-for="(value, category) in regimen.pretreatment"
-                      :key="category"
-                      class="pretreatment-category"
-                  >
-                    <span class="category-label">{{ category }}：</span>
-                    <span class="category-content" v-html="value"></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
     <template #footer>
       <el-button @click="handleClose">关闭</el-button>
