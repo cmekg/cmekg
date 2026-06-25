@@ -20,7 +20,12 @@
           <div v-else-if="currentContent.type === 'drugDetail'" class="drug-detail">
             <div v-for="(value, key) in currentContent.detail" :key="key" class="detail-row">
               <div class="detail-label">{{ key }}</div>
-              <div class="detail-value" v-html="formatDetailValue(value)"></div>
+              <!-- 判断是否为"浓度（mg/ml）"且值包含 < 或 > -->
+              <div
+                  class="detail-value"
+                  :class="{ 'highlight-danger': isConcentrationAndAbnormal(key, value) }"
+                  v-html="formatDetailValue(value)"
+              ></div>
             </div>
           </div>
         </div>
@@ -58,6 +63,14 @@ const emit = defineEmits(['clear', 'open-regimens'])
 const currentContent = ref(null)
 const currentTitle = ref('')
 const currentRegimens = ref([])
+
+// 判断是否为"浓度（mg/ml）"且值不是 "/"
+const isConcentrationAndAbnormal = (key, value) => {
+  if (key !== '浓度（mg/ml）') return false
+  if (!value) return false
+  // 只要不是 "/" 就标红（包括空字符串也标红）
+  return value !== '/'
+}
 
 // 递归查找 regimen
 const findRegimens = (items, key) => {
@@ -184,6 +197,12 @@ watch(() => props.menuKey, (newKey) => {
   color: #606266;
   line-height: 1.5;
   word-break: break-word;
+}
+
+/* 异常值高亮 - 红色 */
+.detail-value.highlight-danger {
+  color: #f56c6c !important;
+  font-weight: bold;
 }
 
 .detail-row {
