@@ -53,7 +53,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { getMenuContentByKey, findMenuTitleByKey, leftMenuConfig } from '@/data/mockData'
+import { getMenuContentByKey, findMenuTitleByKey, dataConfig } from '@/data/mockData'
 
 const props = defineProps({
   menuKey: { type: String, default: null }
@@ -108,7 +108,7 @@ watch(() => props.menuKey, (newKey) => {
   if (newKey) {
     const title = findMenuTitleByKey(newKey)
     const content = getMenuContentByKey(newKey)
-    const regimens = findRegimens(leftMenuConfig, newKey)
+    const regimens = findRegimens(dataConfig, newKey)
 
     if (title && content) {
       currentTitle.value = title

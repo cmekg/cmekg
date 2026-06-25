@@ -61,7 +61,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import leftMenuConfig from '@/data/mockData'
+import dataConfig from '@/data/mockData'
 
 const emit = defineEmits(['select-item'])
 const activeKey = ref('definition')
@@ -117,7 +117,7 @@ const getAllMenuItems = () => {
       node.children.forEach(child => traverse(child, currentPath))
     }
   }
-  leftMenuConfig.forEach(item => traverse(item))
+  dataConfig.forEach(item => traverse(item))
   return items
 }
 
@@ -149,7 +149,7 @@ const handleResultClick = (item) => {
 
 // 递归过滤菜单（只显示匹配的项）
 const filteredMenuConfig = computed(() => {
-  if (!searchText.value) return leftMenuConfig
+  if (!searchText.value) return dataConfig
 
   const keyword = searchText.value.toLowerCase()
 
@@ -171,7 +171,7 @@ const filteredMenuConfig = computed(() => {
     return result
   }
 
-  return filterItems(leftMenuConfig)
+  return filterItems(dataConfig)
 })
 
 const handleItemClick = (key) => {

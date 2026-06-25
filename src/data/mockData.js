@@ -8,8 +8,8 @@ export const graphColors = {
     level3: "#F39C12"    // 三级药物 - 橙色
 }
 
-// ==================== 左侧菜单配置（数据源） ====================
-const leftMenuConfig = [
+// ==================== 所有数据（数据源） ====================
+const dataConfig = [
     {
         key: "definition",
         label: "定义",
@@ -458,6 +458,17 @@ const leftMenuConfig = [
                                 usage: "紫杉醇→顺铂",
                                 usageReason: "原因：减轻骨髓抑制。如果先给顺铂再给紫杉醇，会延缓紫杉醇在体内的排泄。导致紫杉醇在血液里暴露时间延长，浓度异常升高，从而引发严重的骨髓抑制。",
                                 indication: "肺癌、妇科肿瘤、消化道肿瘤"
+                            },
+                            {
+                                name: "TC方案",
+                                pretreatment: {
+                                    "止吐药": "①甲氧氯普胺（胃复安）<br>②雷尼替丁/西咪替丁<br>③福沙匹坦/帕洛司琼/昂丹司琼等",
+                                    "抗过敏药": "①地塞米松（一定在紫杉醇前半小时内使用）<br>②异丙嗪（非那根）",
+                                },
+                                drugs: "紫杉醇、卡铂",
+                                usage: "紫杉醇→卡铂",
+                                usageReason: "原因：紫杉醇先给药可减少与卡铂的毒性叠加，显著降低中性粒细胞减少和血小板减少的发生率。反向顺序会明显增加血液学毒性。紫杉醇需更长预处理及输注时间，先输便于观察过敏反应。",
+                                indication: "卵巢癌、肺癌、头颈部肿瘤"
                             }
                         ]
                     },
@@ -505,6 +516,17 @@ const leftMenuConfig = [
                                 usage: "多西他赛→顺铂→亚叶酸钙→氟尿嘧啶",
                                 usageReason: "原因：①多西他赛在顺铂前：可避免顺铂引起的肝脏血流量改变，保证多西他赛能被正常地清除，降低体内化疗药物蓄积和发生严重骨髓抑制的风险。②顺铂在氟尿嘧啶前，可增强化疗药物抗癌效果：顺铂可增加细胞内还原性叶酸的水平，抑制蛋氨酸的摄取，增强氟尿嘧啶对胸苷酸合成酶的抑制作用，产生协同抗癌效果。必须先给顺铂，才能为氟尿嘧啶创造更好的作用环境。可以保护肾功能：顺铂具有肾毒性，需要充分水化、利尿来保护肾脏。顺铂先输注，可以确保有充足的时间进行水化，并观察患者的耐受情况。③亚叶酸钙必须在氟尿嘧啶前给药。亚叶酸钙是氟尿嘧啶的增敏剂；在氟尿嘧啶前给药，才能提前进入细胞内，增强氟尿嘧啶的抗肿瘤活性。",
                                 indication: "消化系统和头颈部肿瘤"
+                            },
+                            {
+                                name: "DC方案",
+                                pretreatment: {
+                                    "止吐药": "①甲氧氯普胺（胃复安）<br>②雷尼替丁/西咪替丁<br>③福沙匹坦/帕洛司琼/昂丹司琼等",
+                                    "抗过敏药": "①地塞米松<br>②异丙嗪（非那根）",
+                                },
+                                drugs: "多西他赛、卡铂",
+                                usage: "多西他赛→卡铂",
+                                usageReason: "原因：减轻药物毒性叠加。",
+                                indication: "乳腺癌、肺癌"
                             }
                         ]
                     },
@@ -919,7 +941,43 @@ const leftMenuConfig = [
                                 "稳定性（h）": "8（室温）",
                                 "注意事项": "遮光保存，滴注及存放时避免直接日晒"
                             }
-                        }
+                        },
+                        //常见化疗方案
+                        regimen: [
+                            {
+                                name: "TC方案",
+                                pretreatment: {
+                                    "止吐药": "①甲氧氯普胺（胃复安）<br>②雷尼替丁/西咪替丁<br>③福沙匹坦/帕洛司琼/昂丹司琼等",
+                                    "抗过敏药": "①地塞米松（一定在紫杉醇前半小时内使用）<br>②异丙嗪（非那根）",
+                                },
+                                drugs: "紫杉醇、卡铂",
+                                usage: "紫杉醇→卡铂",
+                                usageReason: "原因：紫杉醇先给药可减少与卡铂的毒性叠加，显著降低中性粒细胞减少和血小板减少的发生率。反向顺序会明显增加血液学毒性。紫杉醇需更长预处理及输注时间，先输便于观察过敏反应。",
+                                indication: "卵巢癌、肺癌、头颈部肿瘤"
+                            },
+                            {
+                                name: "DC方案",
+                                pretreatment: {
+                                    "止吐药": "①甲氧氯普胺（胃复安）<br>②雷尼替丁/西咪替丁<br>③福沙匹坦/帕洛司琼/昂丹司琼等",
+                                    "抗过敏药": "①地塞米松<br>②异丙嗪（非那根）",
+                                },
+                                drugs: "多西他赛、卡铂",
+                                usage: "多西他赛→卡铂",
+                                usageReason: "原因：减轻药物毒性叠加。",
+                                indication: "乳腺癌、肺癌"
+                            },
+                            {
+                                name: "EC方案",
+                                pretreatment: {
+                                    "止吐药": "①甲氧氯普胺（胃复安）<br>②雷尼替丁/西咪替丁<br>③福沙匹坦/帕洛司琼/昂丹司琼等",
+                                    "抗过敏药": "①地塞米松<br>②异丙嗪（非那根）",
+                                },
+                                drugs: "依托泊苷、卡铂",
+                                usage: "依托泊苷→卡铂",
+                                usageReason: "原因：最大化两药的抗肿瘤协同作用。",
+                                indication: "肺癌"
+                            }
+                        ]
                     },
                     {
                         key: "chemotherapy21",
@@ -1010,6 +1068,17 @@ const leftMenuConfig = [
                                 usage: "依托泊苷→顺铂",
                                 usageReason: "原因：1.顺铂有明显肾毒性，先输依托泊苷可以先完成水化、利尿；顺铂在后输注，能被更充分地稀释、排泄；从而减轻肾脏负担。2. 顺铂会改变细胞内药物转运蛋白，若先用顺铂，可能降低后续依托泊苷进入细胞的量，减弱化疗效果。先用依托泊苷再用顺铂会增强DNA损伤，协同杀伤更强。3. 减少过敏、不良反应：①依托泊苷有低血压、过敏反应，先输注便于观察处理；②顺铂恶心呕吐反应靠后。",
                                 indication: "肺癌、生殖系统肿瘤"
+                            },
+                            {
+                                name: "EC方案",
+                                pretreatment: {
+                                    "止吐药": "①甲氧氯普胺（胃复安）<br>②雷尼替丁/西咪替丁<br>③福沙匹坦/帕洛司琼/昂丹司琼等",
+                                    "抗过敏药": "①地塞米松<br>②异丙嗪（非那根）",
+                                },
+                                drugs: "依托泊苷、卡铂",
+                                usage: "依托泊苷→卡铂",
+                                usageReason: "原因：最大化两药的抗肿瘤协同作用。",
+                                indication: "肺癌"
                             }
                         ]
                     },
@@ -1306,10 +1375,10 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
 }
 
 // 生成图谱数据
-const { nodes: graphNodes, edges: graphEdges } = generateGraphNodes(leftMenuConfig)
+const { nodes: graphNodes, edges: graphEdges } = generateGraphNodes(dataConfig)
 
 // 获取所有一级菜单节点的key（用于添加它们之间的连接）
-const level1Keys = leftMenuConfig.map(item => item.key)
+const level1Keys = dataConfig.map(item => item.key)
 
 // 添加一级菜单之间的连接（形成链路）
 const level1Edges = []
@@ -1346,7 +1415,7 @@ export const getMenuContentByKey = (menuKey) => {
         }
         return null
     }
-    return findContent(leftMenuConfig, menuKey)
+    return findContent(dataConfig, menuKey)
 }
 
 // 递归查找菜单项标题
@@ -1363,9 +1432,9 @@ export const findMenuTitleByKey = (menuKey) => {
         }
         return null
     }
-    return findTitle(leftMenuConfig, menuKey)
+    return findTitle(dataConfig, menuKey)
 }
 
 // 同时支持默认导出和命名导出
-export default leftMenuConfig
-export { leftMenuConfig }
+export default dataConfig
+export { dataConfig }
