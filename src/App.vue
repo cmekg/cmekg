@@ -94,6 +94,7 @@ const findRegimenByKey = (items, key) => {
 }
 
 // 点击图谱节点
+// 点击图谱节点
 const handleNodeClick = (node) => {
   // ===== 方案节点 或 方案属性节点 → 打开 Regimen 弹窗 =====
   if (node.type === 'regimen' || node.type === 'regimenField') {
@@ -101,22 +102,85 @@ const handleNodeClick = (node) => {
     let targetRegimen = null
 
     if (node.type === 'regimen') {
+      // 直接是方案节点
       targetRegimen = node.regimenData
       if (node.parentKey) {
         const parentNode = graphData.value.nodes.find(n => n.id === node.parentKey)
         if (parentNode) drugName = parentNode.name || ''
       }
     } else if (node.type === 'regimenField') {
-      const parentNode = graphData.value.nodes.find(n => n.id === node.parentKey)
-      if (parentNode && parentNode.regimenData) {
-        targetRegimen = parentNode.regimenData
+      // 方案属性节点：向上查找 regimen 节点
+      const findParentRegimen = (nodeId) => {
+        const parentNode = graphData.value.nodes.find(n => n.id === nodeId)
+        if (!parentNode) return null
+        if (parentNode.type === 'regimen') {
+          return parentNode
+        }
         if (parentNode.parentKey) {
-          const drugNode = graphData.value.nodes.find(n => n.id === parentNode.parentKey)
-          if (drugNode) drugName = drugNode.name || ''
+          return findParentRegimen(parentNode.parentKey)
+        }
+        return null
+      }
+
+      const regimenNode = findParentRegimen(node.id)
+
+      if (regimenNode) {
+        targetRegimen = regimenNode.regimenData
+        // 查找药物节点
+        const findDrugNode = (nodeId) => {
+          const parentNode = graphData.value.nodes.find(n => n.id === nodeId)
+          if (!parentNode) return null
+          if (parentNode.hasDetail) {
+            return parentNode
+          }
+          if (parentNode.parentKey) {
+            return findDrugNode(parentNode.parentKey)
+          }
+          return null
+        }
+        const drugNode = findDrugNode(regimenNode.id)
+        if (drugNode) drugName = drugNode.name || ''
+      }
+
+      // 如果找到了 regimen，打开弹窗
+      if (targetRegimen) {
+        const regimenWithDrug = {
+          ...targetRegimen,
+          _drugName: drugName
+        }
+        dialogRegimens.value = [regimenWithDrug]
+        if (regimensDialogRef.value) {
+          regimensDialogRef.value.open()
+        }
+        if (graphRef.value && graphRef.value.focusNode) {
+          graphRef.value.focusNode(node.id)
+        }
+        return
+      }
+
+      // 备用：尝试从节点的 regimenParentKey 直接获取
+      if (node.regimenParentKey) {
+        const parentNode = graphData.value.nodes.find(n => n.id === node.regimenParentKey)
+        if (parentNode && parentNode.regimenData) {
+          targetRegimen = parentNode.regimenData
+          drugName = parentNode.name || ''
+          const regimenWithDrug = {
+            ...targetRegimen,
+            _drugName: drugName
+          }
+          dialogRegimens.value = [regimenWithDrug]
+          if (regimensDialogRef.value) {
+            regimensDialogRef.value.open()
+          }
+          if (graphRef.value && graphRef.value.focusNode) {
+            graphRef.value.focusNode(node.id)
+          }
+          return
         }
       }
     }
 
+    // 如果找到了 regimen，打开弹窗
     if (targetRegimen) {
       const regimenWithDrug = {
         ...targetRegimen,
