@@ -1334,6 +1334,11 @@ const dataConfig = [
 
 // ==================== 从菜单配置自动生成图谱数据 ====================
 
+// ==================== 从菜单配置自动生成图谱数据 ====================
+
+// 递归生成图谱节点和边
+// ==================== 从菜单配置自动生成图谱数据 ====================
+
 // 递归生成图谱节点和边
 const generateGraphNodes = (items, parentId = null, level = 1) => {
     const nodes = []
@@ -1402,7 +1407,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
             item.regimen.forEach((reg, index) => {
                 const regimenId = `${currentNodeId}-regimen-${index}`
 
-                // 添加方案节点
+                // 添加方案节点（红色）
                 nodes.push({
                     id: regimenId,
                     name: reg.name,
@@ -1411,9 +1416,8 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                     parentKey: currentNodeId,
                     hasDetail: false,
                     isRegimen: true,
-                    regimenData: reg  // 保存完整方案数据
+                    regimenData: reg
                 })
-
                 edges.push({
                     source: currentNodeId,
                     target: regimenId,
@@ -1421,43 +1425,256 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                     arrow: true
                 })
 
-                // 展开方案的属性（应用、化疗药物、预处理、用药顺序）
-                const regFields = {
-                    '应用': reg.indication,
-                    '化疗药物': reg.drugs,
-                    '预处理': reg.pretreatment ? Object.keys(reg.pretreatment).join('、') : '',
-                    '用药顺序': reg.usage
-                }
-
-                for (const [fieldKey, fieldValue] of Object.entries(regFields)) {
-                    if (!fieldValue || fieldValue === '' || fieldValue === '/') continue
-
-                    const fieldId = `${regimenId}-field-${fieldKey.replace(/[（]/g, '-').replace(/[）]/g, '-')}`
-                    let displayFieldValue = fieldValue
-                    if (typeof displayFieldValue === 'string' && displayFieldValue.length > 15) {
-                        displayFieldValue = displayFieldValue.substring(0, 13) + '...'
-                    }
-                    const fieldName = `${fieldKey}：${displayFieldValue}`
-
+                // ===== 1. 应用（indication）作为独立节点 =====
+                if (reg.indication) {
+                    const indicationId = `${regimenId}-indication`
                     nodes.push({
-                        id: fieldId,
-                        name: fieldName,
+                        id: indicationId,
+                        name: '应用',
                         type: 'regimenField',
                         level: 4,
                         parentKey: regimenId,
                         regimenParentKey: currentNodeId,
-                        fieldKey: fieldKey,
-                        fieldValue: fieldValue,
+                        fieldKey: '应用',
+                        fieldValue: reg.indication,
                         hasDetail: false,
-                        isRegimen: false
+                        isRegimen: false,
+                        isCategory: true
                     })
-
                     edges.push({
                         source: regimenId,
-                        target: fieldId,
+                        target: indicationId,
                         label: "",
                         arrow: true
                     })
+
+                    // 应用的具体值拆分为子节点
+                    const indications = reg.indication.split(/[、，,、\s]+/).filter(s => s.trim())
+                    indications.forEach((ind, idx) => {
+                        const indId = `${indicationId}-value-${idx}`
+                        nodes.push({
+                            id: indId,
+                            name: ind.trim(),
+                            type: 'regimenField',
+                            level: 5,
+                            parentKey: indicationId,
+                            regimenParentKey: currentNodeId,
+                            fieldKey: '应用',
+                            fieldValue: ind.trim(),
+                            hasDetail: false,
+                            isRegimen: false
+                        })
+                        edges.push({
+                            source: indicationId,
+                            target: indId,
+                            label: "",
+                            arrow: true
+                        })
+                    })
+                }
+
+                // ===== 2. 化疗药物作为独立节点 =====
+                if (reg.drugs) {
+                    const drugsId = `${regimenId}-drugs`
+                    nodes.push({
+                        id: drugsId,
+                        name: '化疗药物',
+                        type: 'regimenField',
+                        level: 4,
+                        parentKey: regimenId,
+                        regimenParentKey: currentNodeId,
+                        fieldKey: '化疗药物',
+                        fieldValue: reg.drugs,
+                        hasDetail: false,
+                        isRegimen: false,
+                        isCategory: true
+                    })
+                    edges.push({
+                        source: regimenId,
+                        target: drugsId,
+                        label: "",
+                        arrow: true
+                    })
+
+                    const drugList = reg.drugs.split(/[、，,、\s]+/).filter(s => s.trim())
+                    drugList.forEach((drug, idx) => {
+                        const drugId = `${drugsId}-value-${idx}`
+                        nodes.push({
+                            id: drugId,
+                            name: drug.trim(),
+                            type: 'regimenField',
+                            level: 5,
+                            parentKey: drugsId,
+                            regimenParentKey: currentNodeId,
+                            fieldKey: '化疗药物',
+                            fieldValue: drug.trim(),
+                            hasDetail: false,
+                            isRegimen: false
+                        })
+                        edges.push({
+                            source: drugsId,
+                            target: drugId,
+                            label: "",
+                            arrow: true
+                        })
+                    })
+                }
+
+                // ===== 3. 预处理作为独立节点 =====
+                if (reg.pretreatment) {
+                    const pretreatmentId = `${regimenId}-pretreatment`
+                    nodes.push({
+                        id: pretreatmentId,
+                        name: '预处理',
+                        type: 'regimenField',
+                        level: 4,
+                        parentKey: regimenId,
+                        regimenParentKey: currentNodeId,
+                        fieldKey: '预处理',
+                        fieldValue: Object.keys(reg.pretreatment).join('、'),
+                        hasDetail: false,
+                        isRegimen: false,
+                        isCategory: true
+                    })
+                    edges.push({
+                        source: regimenId,
+                        target: pretreatmentId,
+                        label: "",
+                        arrow: true
+                    })
+
+                    for (const [category, value] of Object.entries(reg.pretreatment)) {
+                        if (!value) continue
+
+                        const categoryId = `${pretreatmentId}-cat-${category.replace(/[（]/g, '-').replace(/[）]/g, '-')}`
+                        nodes.push({
+                            id: categoryId,
+                            name: category,
+                            type: 'regimenField',
+                            level: 5,
+                            parentKey: pretreatmentId,
+                            regimenParentKey: currentNodeId,
+                            fieldKey: '预处理',
+                            fieldValue: category,
+                            hasDetail: false,
+                            isRegimen: false,
+                            isCategory: true
+                        })
+                        edges.push({
+                            source: pretreatmentId,
+                            target: categoryId,
+                            label: "",
+                            arrow: true
+                        })
+
+                        let items = []
+                        if (typeof value === 'string') {
+                            items = value.split(/<br>/).filter(s => s.trim())
+                            if (items.length <= 1) {
+                                items = value.split(/(?=②|③|④|⑤)/).filter(s => s.trim())
+                            }
+                        }
+                        items.forEach((item, idx) => {
+                            const itemId = `${categoryId}-item-${idx}`
+                            let cleanItem = item.replace(/<br>/g, '').trim()
+                            nodes.push({
+                                id: itemId,
+                                name: cleanItem,
+                                type: 'regimenField',
+                                level: 6,
+                                parentKey: categoryId,
+                                regimenParentKey: currentNodeId,
+                                fieldKey: category,
+                                fieldValue: cleanItem,
+                                hasDetail: false,
+                                isRegimen: false
+                            })
+                            edges.push({
+                                source: categoryId,
+                                target: itemId,
+                                label: "",
+                                arrow: true
+                            })
+                        })
+                    }
+                }
+
+                // ===== 4. 用药顺序作为独立节点 =====
+                if (reg.usage) {
+                    const usageId = `${regimenId}-usage`
+                    nodes.push({
+                        id: usageId,
+                        name: '用药顺序',
+                        type: 'regimenField',
+                        level: 4,
+                        parentKey: regimenId,
+                        regimenParentKey: currentNodeId,
+                        fieldKey: '用药顺序',
+                        fieldValue: reg.usage,
+                        hasDetail: false,
+                        isRegimen: false,
+                        isCategory: true
+                    })
+                    edges.push({
+                        source: regimenId,
+                        target: usageId,
+                        label: "",
+                        arrow: true
+                    })
+
+                    const usageSteps = reg.usage.split(/[→\-—>]+/).filter(s => s.trim())
+                    if (usageSteps.length > 1) {
+                        usageSteps.forEach((step, idx) => {
+                            const stepId = `${usageId}-step-${idx}`
+                            nodes.push({
+                                id: stepId,
+                                name: step.trim(),
+                                type: 'regimenField',
+                                level: 5,
+                                parentKey: usageId,
+                                regimenParentKey: currentNodeId,
+                                fieldKey: '用药顺序',
+                                fieldValue: step.trim(),
+                                hasDetail: false,
+                                isRegimen: false
+                            })
+                            edges.push({
+                                source: usageId,
+                                target: stepId,
+                                label: "",
+                                arrow: true
+                            })
+                            if (idx > 0) {
+                                const prevStepId = `${usageId}-step-${idx-1}`
+                                edges.push({
+                                    source: prevStepId,
+                                    target: stepId,
+                                    label: "→",
+                                    arrow: true
+                                })
+                            }
+                        })
+                    } else {
+                        const stepId = `${usageId}-step-0`
+                        nodes.push({
+                            id: stepId,
+                            name: reg.usage.trim(),
+                            type: 'regimenField',
+                            level: 5,
+                            parentKey: usageId,
+                            regimenParentKey: currentNodeId,
+                            fieldKey: '用药顺序',
+                            fieldValue: reg.usage.trim(),
+                            hasDetail: false,
+                            isRegimen: false
+                        })
+                        edges.push({
+                            source: usageId,
+                            target: stepId,
+                            label: "",
+                            arrow: true
+                        })
+                    }
                 }
             })
         }

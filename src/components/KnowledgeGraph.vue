@@ -25,7 +25,7 @@ let focusTimer = null
 
 // 节点颜色配置
 const getNodeColor = (node) => {
-  if (node.type === 'regimen') return '#FF6B6B'
+  if (node.type === 'regimen') return '#9B59B6'
   if (node.type === 'regimenField') return '#FFB347'
   if (node.type === 'attribute') return '#B39DDB'
   if (node.hasDetail) return '#F6BD16'
@@ -75,7 +75,13 @@ const getNodeStyle = (node) => {
   }
 
   if (node.type === 'regimen') {
-    return { ...baseStyle, stroke: '#ff4444', lineWidth: 2.5, shadowBlur: 8, shadowColor: 'rgba(255, 68, 68, 0.2)' }
+    return {
+      ...baseStyle,
+      stroke: '#8E44AD',
+      lineWidth: 2.5,
+      shadowBlur: 8,
+      shadowColor: 'rgba(155, 89, 182, 0.3)'
+    }
   }
   if (node.type === 'regimenField') {
     return { ...baseStyle, stroke: '#FF8C00', lineWidth: 1, shadowBlur: 2, lineDash: [2, 2] }
