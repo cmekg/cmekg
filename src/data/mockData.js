@@ -1334,10 +1334,13 @@ const dataConfig = [
 
 // ==================== 从菜单配置自动生成图谱数据 ====================
 
-// ==================== 从菜单配置自动生成图谱数据 ====================
-
-// 递归生成图谱节点和边
-// ==================== 从菜单配置自动生成图谱数据 ====================
+// 清洗 HTML 标签的辅助函数（去除 span 标签，保留纯文本用于图谱节点）
+const cleanHtmlTags = (str) => {
+    if (typeof str !== 'string') return str
+    return str
+        .replace(/<span class="reason-text">/g, '')
+        .replace(/<\/span>/g, '')
+}
 
 // 递归生成图谱节点和边
 const generateGraphNodes = (items, parentId = null, level = 1) => {
@@ -1374,8 +1377,11 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
             for (const [key, value] of Object.entries(detail)) {
                 if (!value || value === '' || value === '/') continue
 
+                // 清洗 value：去掉 span 标签
+                const cleanValue = cleanHtmlTags(value)
+
                 const attrId = `${currentNodeId}-attr-${key.replace(/[（]/g, '-').replace(/[）]/g, '-').replace(/[（）]/g, '-')}`
-                let displayValue = value
+                let displayValue = cleanValue
                 if (displayValue.length > 20) {
                     displayValue = displayValue.substring(0, 18) + '...'
                 }
@@ -1388,7 +1394,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                     level: 4,
                     parentKey: currentNodeId,
                     fullName: key,
-                    detailValue: value,
+                    detailValue: cleanValue,
                     hasDetail: false,
                     isRegimen: false
                 })
@@ -1577,6 +1583,8 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                         items.forEach((item, idx) => {
                             const itemId = `${categoryId}-item-${idx}`
                             let cleanItem = item.replace(/<br>/g, '').trim()
+                            // 去掉 span 标签
+                            cleanItem = cleanHtmlTags(cleanItem)
                             nodes.push({
                                 id: itemId,
                                 name: cleanItem,

@@ -53,7 +53,7 @@ import MenuPanel from './components/MenuPanel.vue'
 import KnowledgeGraph from './components/KnowledgeGraph.vue'
 import DetailPanel from './components/DetailPanel.vue'
 import Regimen from './components/Regimen.vue'
-import { graphData as initialGraphData, getMenuContentByKey } from './data/mockData'
+import { graphData as initialGraphData, getMenuContentByKey, dataConfig } from './data/mockData'
 
 const graphData = ref(initialGraphData)
 const selectedMenuKey = ref(null)
@@ -79,97 +79,101 @@ const handleOpenRegimens = (regimens) => {
   }
 }
 
+// 递归查找 regimen（从 dataConfig 中查找）
+const findRegimenByKey = (items, key) => {
+  for (const item of items) {
+    if (item.key === key) {
+      return item.regimen || []
+    }
+    if (item.children) {
+      const found = findRegimenByKey(item.children, key)
+      if (found && found.length) return found
+    }
+  }
+  return []
+}
+
 // 点击图谱节点
 const handleNodeClick = (node) => {
-  // 如果是方案节点，打开 Regimen 弹窗（显示该药物所有方案）
-  if (node.type === 'regimen' && node.regimenData) {
-    // 获取父药物节点
+  // ===== 方案节点 或 方案属性节点 → 打开 Regimen 弹窗 =====
+  if (node.type === 'regimen' || node.type === 'regimenField') {
     let drugName = ''
-    let allRegimens = []
+    let targetRegimen = null
 
-    if (node.parentKey) {
-      const parentNode = graphData.value.nodes.find(n => n.id === node.parentKey)
-      if (parentNode) {
-        drugName = parentNode.name || ''
-        // 查找父药物节点的所有方案数据（从原始数据中获取）
-        // 方法：通过 parentKey 在 graphData.nodes 中查找所有 regimen 节点
-        const regimenNodes = graphData.value.nodes.filter(n =>
-            n.parentKey === node.parentKey && n.type === 'regimen' && n.regimenData
-        )
-        // 提取方案数据
-        allRegimens = regimenNodes.map(n => n.regimenData).filter(Boolean)
+    if (node.type === 'regimen') {
+      targetRegimen = node.regimenData
+      if (node.parentKey) {
+        const parentNode = graphData.value.nodes.find(n => n.id === node.parentKey)
+        if (parentNode) drugName = parentNode.name || ''
       }
-    }
-
-    // 如果没找到，使用当前节点的方案
-    if (allRegimens.length === 0) {
-      allRegimens = [node.regimenData]
-    }
-
-    // 将药物名称添加到每个方案数据中
-    const regimensWithDrug = allRegimens.map(reg => ({
-      ...reg,
-      _drugName: drugName || node.regimenData._drugName || ''
-    }))
-
-    dialogRegimens.value = regimensWithDrug
-    if (regimensDialogRef.value) {
-      regimensDialogRef.value.open()
-    }
-    if (graphRef.value && graphRef.value.focusNode) {
-      graphRef.value.focusNode(node.id)
-    }
-    return
-  }
-
-  // 如果是方案属性节点（应用、化疗药物等），找到父方案并打开弹窗
-  if (node.type === 'regimenField' && node.parentKey) {
-    // 从 graphData 中查找父节点
-    const parentNode = graphData.value.nodes.find(n => n.id === node.parentKey)
-    if (parentNode && parentNode.regimenData) {
-      // 获取父药物名称
-      let drugName = ''
-      let allRegimens = []
-
-      if (parentNode.parentKey) {
-        const drugNode = graphData.value.nodes.find(n => n.id === parentNode.parentKey)
-        if (drugNode) {
-          drugName = drugNode.name || ''
-          // 查找该药物所有方案
-          const regimenNodes = graphData.value.nodes.filter(n =>
-              n.parentKey === parentNode.parentKey && n.type === 'regimen' && n.regimenData
-          )
-          allRegimens = regimenNodes.map(n => n.regimenData).filter(Boolean)
+    } else if (node.type === 'regimenField') {
+      const parentNode = graphData.value.nodes.find(n => n.id === node.parentKey)
+      if (parentNode && parentNode.regimenData) {
+        targetRegimen = parentNode.regimenData
+        if (parentNode.parentKey) {
+          const drugNode = graphData.value.nodes.find(n => n.id === parentNode.parentKey)
+          if (drugNode) drugName = drugNode.name || ''
         }
       }
+    }
 
-      if (allRegimens.length === 0) {
-        allRegimens = [parentNode.regimenData]
-      }
-
-      const regimensWithDrug = allRegimens.map(reg => ({
-        ...reg,
+    if (targetRegimen) {
+      const regimenWithDrug = {
+        ...targetRegimen,
         _drugName: drugName
-      }))
-
-      dialogRegimens.value = regimensWithDrug
+      }
+      dialogRegimens.value = [regimenWithDrug]
       if (regimensDialogRef.value) {
         regimensDialogRef.value.open()
       }
       if (graphRef.value && graphRef.value.focusNode) {
-        graphRef.value.focusNode(node.parentKey)
+        graphRef.value.focusNode(node.id)
       }
       return
     }
   }
 
-  // 如果是属性节点，找到其父节点（药物节点）
+  // ===== 药物节点（有详情的） → 优先打开 Regimen，如果没有则打开 DetailPanel =====
+  if (node.hasDetail) {
+    // 直接从 dataConfig 中查找 regimen
+    const regimens = findRegimenByKey(dataConfig, node.id)
+
+    if (regimens && regimens.length > 0) {
+      const regimensWithDrug = regimens.map(reg => ({
+        ...reg,
+        _drugName: node.name
+      }))
+      dialogRegimens.value = regimensWithDrug
+      if (regimensDialogRef.value) {
+        regimensDialogRef.value.open()
+      }
+      if (graphRef.value && graphRef.value.focusNode) {
+        graphRef.value.focusNode(node.id)
+      }
+      return
+    }
+
+    // 没有方案，打开右侧 DetailPanel
+    const content = getMenuContentByKey(node.id)
+    if (content) {
+      selectedMenuKey.value = node.id
+      if (isMobile.value) {
+        rightOpen.value = true
+        leftOpen.value = false
+      }
+      if (graphRef.value && graphRef.value.focusNode) {
+        graphRef.value.focusNode(node.id)
+      }
+      return
+    }
+  }
+
+  // ===== 属性节点（药物属性） → 打开右侧 DetailPanel =====
   let targetId = node.id
   if (node.type === 'attribute' && node.parentKey) {
     targetId = node.parentKey
   }
 
-  // 检查目标节点是否有 content 数据
   const content = getMenuContentByKey(targetId)
 
   if (content || node.hasDetail) {
@@ -200,11 +204,9 @@ const handleClearDetail = () => {
 }
 
 const handleSelectMenuItem = (menuKey) => {
-  // 检查是否有 content 数据
   const content = getMenuContentByKey(menuKey)
 
   if (!content) {
-    // 没有 content 数据，清空右侧详情，只聚焦图谱节点
     selectedMenuKey.value = null
     if (isMobile.value) {
       rightOpen.value = false
@@ -215,13 +217,11 @@ const handleSelectMenuItem = (menuKey) => {
     return
   }
 
-  // 有 content 数据，正常显示右侧详情
   selectedMenuKey.value = menuKey
   if (isMobile.value) {
     rightOpen.value = true
     leftOpen.value = false
   }
-  // 聚焦图谱中的对应节点
   if (graphRef.value && graphRef.value.focusNode) {
     graphRef.value.focusNode(menuKey)
   }
@@ -292,7 +292,6 @@ body {
   font-weight: bold;
 }
 
-/* 主容器 - 占满剩余空间 */
 .el-container:nth-child(2) {
   flex: 1;
   overflow: hidden;
