@@ -1350,7 +1350,8 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
             name: item.label,
             type: nodeType,
             level: level,
-            hasDetail: isDrugDetail
+            hasDetail: isDrugDetail,
+            isRegimen: false
         })
 
         if (parentId) {
@@ -1362,22 +1363,17 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
             })
         }
 
-        // 如果当前节点有 drugDetail，展开 detail 中的每个属性作为子节点
+        // 如果有 drugDetail，展开 detail 属性
         if (isDrugDetail && item.content.detail) {
             const detail = item.content.detail
             for (const [key, value] of Object.entries(detail)) {
-                // 跳过空值
                 if (!value || value === '' || value === '/') continue
 
-                // 生成属性节点ID
                 const attrId = `${currentNodeId}-attr-${key.replace(/[（]/g, '-').replace(/[）]/g, '-').replace(/[（）]/g, '-')}`
-
-                // 截取属性值（如果太长则截断）
                 let displayValue = value
                 if (displayValue.length > 20) {
                     displayValue = displayValue.substring(0, 18) + '...'
                 }
-                // 属性节点名称显示为 "属性名：属性值"
                 const attrName = `${key}：${displayValue}`
 
                 nodes.push({
@@ -1388,7 +1384,8 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                     parentKey: currentNodeId,
                     fullName: key,
                     detailValue: value,
-                    hasDetail: false
+                    hasDetail: false,
+                    isRegimen: false
                 })
 
                 edges.push({
@@ -1398,6 +1395,71 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                     arrow: true
                 })
             }
+        }
+
+        // 如果有 regimen，展开每个方案
+        if (item.regimen && Array.isArray(item.regimen) && item.regimen.length > 0) {
+            item.regimen.forEach((reg, index) => {
+                const regimenId = `${currentNodeId}-regimen-${index}`
+
+                // 添加方案节点
+                nodes.push({
+                    id: regimenId,
+                    name: reg.name,
+                    type: 'regimen',
+                    level: 3,
+                    parentKey: currentNodeId,
+                    hasDetail: false,
+                    isRegimen: true,
+                    regimenData: reg  // 保存完整方案数据
+                })
+
+                edges.push({
+                    source: currentNodeId,
+                    target: regimenId,
+                    label: "",
+                    arrow: true
+                })
+
+                // 展开方案的属性（应用、化疗药物、预处理、用药顺序）
+                const regFields = {
+                    '应用': reg.indication,
+                    '化疗药物': reg.drugs,
+                    '预处理': reg.pretreatment ? Object.keys(reg.pretreatment).join('、') : '',
+                    '用药顺序': reg.usage
+                }
+
+                for (const [fieldKey, fieldValue] of Object.entries(regFields)) {
+                    if (!fieldValue || fieldValue === '' || fieldValue === '/') continue
+
+                    const fieldId = `${regimenId}-field-${fieldKey.replace(/[（]/g, '-').replace(/[）]/g, '-')}`
+                    let displayFieldValue = fieldValue
+                    if (typeof displayFieldValue === 'string' && displayFieldValue.length > 15) {
+                        displayFieldValue = displayFieldValue.substring(0, 13) + '...'
+                    }
+                    const fieldName = `${fieldKey}：${displayFieldValue}`
+
+                    nodes.push({
+                        id: fieldId,
+                        name: fieldName,
+                        type: 'regimenField',
+                        level: 4,
+                        parentKey: regimenId,
+                        regimenParentKey: currentNodeId,
+                        fieldKey: fieldKey,
+                        fieldValue: fieldValue,
+                        hasDetail: false,
+                        isRegimen: false
+                    })
+
+                    edges.push({
+                        source: regimenId,
+                        target: fieldId,
+                        label: "",
+                        arrow: true
+                    })
+                }
+            })
         }
 
         // 递归处理子节点
@@ -1428,7 +1490,7 @@ for (let i = 0; i < level1Keys.length - 1; i++) {
         source: level1Keys[i],
         target: level1Keys[i + 1],
         label: "",
-        arrow: false  // 无箭头
+        arrow: false
     })
 }
 

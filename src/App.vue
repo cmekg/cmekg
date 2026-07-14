@@ -81,6 +81,88 @@ const handleOpenRegimens = (regimens) => {
 
 // 点击图谱节点
 const handleNodeClick = (node) => {
+  // 如果是方案节点，打开 Regimen 弹窗（显示该药物所有方案）
+  if (node.type === 'regimen' && node.regimenData) {
+    // 获取父药物节点
+    let drugName = ''
+    let allRegimens = []
+
+    if (node.parentKey) {
+      const parentNode = graphData.value.nodes.find(n => n.id === node.parentKey)
+      if (parentNode) {
+        drugName = parentNode.name || ''
+        // 查找父药物节点的所有方案数据（从原始数据中获取）
+        // 方法：通过 parentKey 在 graphData.nodes 中查找所有 regimen 节点
+        const regimenNodes = graphData.value.nodes.filter(n =>
+            n.parentKey === node.parentKey && n.type === 'regimen' && n.regimenData
+        )
+        // 提取方案数据
+        allRegimens = regimenNodes.map(n => n.regimenData).filter(Boolean)
+      }
+    }
+
+    // 如果没找到，使用当前节点的方案
+    if (allRegimens.length === 0) {
+      allRegimens = [node.regimenData]
+    }
+
+    // 将药物名称添加到每个方案数据中
+    const regimensWithDrug = allRegimens.map(reg => ({
+      ...reg,
+      _drugName: drugName || node.regimenData._drugName || ''
+    }))
+
+    dialogRegimens.value = regimensWithDrug
+    if (regimensDialogRef.value) {
+      regimensDialogRef.value.open()
+    }
+    if (graphRef.value && graphRef.value.focusNode) {
+      graphRef.value.focusNode(node.id)
+    }
+    return
+  }
+
+  // 如果是方案属性节点（应用、化疗药物等），找到父方案并打开弹窗
+  if (node.type === 'regimenField' && node.parentKey) {
+    // 从 graphData 中查找父节点
+    const parentNode = graphData.value.nodes.find(n => n.id === node.parentKey)
+    if (parentNode && parentNode.regimenData) {
+      // 获取父药物名称
+      let drugName = ''
+      let allRegimens = []
+
+      if (parentNode.parentKey) {
+        const drugNode = graphData.value.nodes.find(n => n.id === parentNode.parentKey)
+        if (drugNode) {
+          drugName = drugNode.name || ''
+          // 查找该药物所有方案
+          const regimenNodes = graphData.value.nodes.filter(n =>
+              n.parentKey === parentNode.parentKey && n.type === 'regimen' && n.regimenData
+          )
+          allRegimens = regimenNodes.map(n => n.regimenData).filter(Boolean)
+        }
+      }
+
+      if (allRegimens.length === 0) {
+        allRegimens = [parentNode.regimenData]
+      }
+
+      const regimensWithDrug = allRegimens.map(reg => ({
+        ...reg,
+        _drugName: drugName
+      }))
+
+      dialogRegimens.value = regimensWithDrug
+      if (regimensDialogRef.value) {
+        regimensDialogRef.value.open()
+      }
+      if (graphRef.value && graphRef.value.focusNode) {
+        graphRef.value.focusNode(node.parentKey)
+      }
+      return
+    }
+  }
+
   // 如果是属性节点，找到其父节点（药物节点）
   let targetId = node.id
   if (node.type === 'attribute' && node.parentKey) {
@@ -96,7 +178,6 @@ const handleNodeClick = (node) => {
       rightOpen.value = true
       leftOpen.value = false
     }
-    // 聚焦图谱中的对应节点
     if (graphRef.value && graphRef.value.focusNode) {
       graphRef.value.focusNode(targetId)
     }

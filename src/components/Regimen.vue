@@ -1,7 +1,7 @@
 <template>
   <el-dialog
       v-model="visible"
-      title="常见化疗方案"
+      :title="dialogTitle"
       width="800px"
       :close-on-click-modal="true"
       @close="handleClose"
@@ -67,7 +67,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const props = defineProps({
   regimens: {
@@ -78,6 +78,18 @@ const props = defineProps({
 
 const visible = ref(false)
 const activeTab = ref('0')
+
+// 计算弹窗标题
+const dialogTitle = computed(() => {
+  if (!props.regimens || props.regimens.length === 0) return '常见化疗方案'
+  const firstRegimen = props.regimens[0]
+  const drugName = firstRegimen._drugName || ''
+  const count = props.regimens.length
+  if (drugName) {
+    return `${drugName} - 常见化疗方案（${count}个）`
+  }
+  return `常见化疗方案（${count}个）`
+})
 
 const open = () => {
   visible.value = true
