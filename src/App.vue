@@ -35,9 +35,10 @@
       <el-aside :width="rightWidth" class="right-aside" :class="{ 'mobile-open': rightOpen }">
         <div class="mobile-close" @click="rightOpen = false">✕</div>
         <DetailPanel
+            ref="detailPanelRef"
             :menu-key="selectedMenuKey"
             @clear="handleClearDetail"
-            @open-regimens="handleOpenRegimens"
+            @open-regimens="handleOpenRegimensFromDetail"
         />
       </el-aside>
     </el-container>
@@ -58,6 +59,7 @@ import { graphData as initialGraphData, getMenuContentByKey, dataConfig } from '
 const graphData = ref(initialGraphData)
 const selectedMenuKey = ref(null)
 const graphRef = ref(null)
+const detailPanelRef = ref(null)
 const regimensDialogRef = ref(null)
 const dialogRegimens = ref([])
 
@@ -65,18 +67,71 @@ const leftOpen = ref(false)
 const rightOpen = ref(false)
 const isMobile = ref(window.innerWidth <= 768)
 
+// 标记是否从 DetailPanel 打开 Regimen
+const isFromDetailPanel = ref(false)
+
 const leftWidth = computed(() => isMobile.value ? '0px' : '280px')
 const rightWidth = computed(() => {
   if (!selectedMenuKey.value) return '0px'
   return isMobile.value ? '280px' : '320px'
 })
 
-// 打开化疗方案弹窗
-const handleOpenRegimens = (regimens) => {
-  dialogRegimens.value = regimens
+// 打开化疗方案弹窗（通用方法）
+const openRegimensDialog = (regimens, drugName = '', closeDetail = false) => {
+  if (!regimens || regimens.length === 0) return
+
+  const regimensWithDrug = regimens.map(reg => ({
+    ...reg,
+    _drugName: drugName
+  }))
+  dialogRegimens.value = regimensWithDrug
+
+  // 如果需要关闭 DetailPanel
+  if (closeDetail) {
+    selectedMenuKey.value = null
+    if (isMobile.value) {
+      rightOpen.value = false
+    }
+  }
+
   if (regimensDialogRef.value) {
     regimensDialogRef.value.open()
   }
+}
+
+// 从 DetailPanel 打开 Regimen（保留 DetailPanel）
+const handleOpenRegimensFromDetail = (regimens) => {
+  isFromDetailPanel.value = true
+  // 从 DetailPanel 打开时，尝试获取当前药物名称
+  let drugName = ''
+  if (selectedMenuKey.value) {
+    const title = findMenuTitleByKey(selectedMenuKey.value)
+    if (title) drugName = title
+  }
+  openRegimensDialog(regimens, drugName, false)
+}
+
+// 从图谱打开 Regimen（关闭 DetailPanel）
+const openRegimensFromGraph = (regimens, drugName = '') => {
+  isFromDetailPanel.value = false
+  openRegimensDialog(regimens, drugName, true)
+}
+
+// 递归查找菜单项标题
+const findMenuTitleByKey = (menuKey) => {
+  const findTitle = (items, key) => {
+    for (const item of items) {
+      if (item.key === key) {
+        return item.label
+      }
+      if (item.children && item.children.length) {
+        const found = findTitle(item.children, key)
+        if (found) return found
+      }
+    }
+    return null
+  }
+  return findTitle(dataConfig, menuKey)
 }
 
 // 递归查找 regimen（从 dataConfig 中查找）
@@ -94,9 +149,8 @@ const findRegimenByKey = (items, key) => {
 }
 
 // 点击图谱节点
-// 点击图谱节点
 const handleNodeClick = (node) => {
-  // ===== 方案节点 或 方案属性节点 → 打开 Regimen 弹窗 =====
+  // ===== 方案节点 或 方案属性节点 → 打开 Regimen 弹窗（关闭 DetailPanel） =====
   if (node.type === 'regimen' || node.type === 'regimenField') {
     let drugName = ''
     let targetRegimen = null
@@ -142,16 +196,9 @@ const handleNodeClick = (node) => {
         if (drugNode) drugName = drugNode.name || ''
       }
 
-      // 如果找到了 regimen，打开弹窗
+      // 如果找到了 regimen，打开弹窗（关闭 DetailPanel）
       if (targetRegimen) {
-        const regimenWithDrug = {
-          ...targetRegimen,
-          _drugName: drugName
-        }
-        dialogRegimens.value = [regimenWithDrug]
-        if (regimensDialogRef.value) {
-          regimensDialogRef.value.open()
-        }
+        openRegimensFromGraph([targetRegimen], drugName)
         if (graphRef.value && graphRef.value.focusNode) {
           graphRef.value.focusNode(node.id)
         }
@@ -164,14 +211,7 @@ const handleNodeClick = (node) => {
         if (parentNode && parentNode.regimenData) {
           targetRegimen = parentNode.regimenData
           drugName = parentNode.name || ''
-          const regimenWithDrug = {
-            ...targetRegimen,
-            _drugName: drugName
-          }
-          dialogRegimens.value = [regimenWithDrug]
-          if (regimensDialogRef.value) {
-            regimensDialogRef.value.open()
-          }
+          openRegimensFromGraph([targetRegimen], drugName)
           if (graphRef.value && graphRef.value.focusNode) {
             graphRef.value.focusNode(node.id)
           }
@@ -180,16 +220,9 @@ const handleNodeClick = (node) => {
       }
     }
 
-    // 如果找到了 regimen，打开弹窗
+    // 如果找到了 regimen，打开弹窗（关闭 DetailPanel）
     if (targetRegimen) {
-      const regimenWithDrug = {
-        ...targetRegimen,
-        _drugName: drugName
-      }
-      dialogRegimens.value = [regimenWithDrug]
-      if (regimensDialogRef.value) {
-        regimensDialogRef.value.open()
-      }
+      openRegimensFromGraph([targetRegimen], drugName)
       if (graphRef.value && graphRef.value.focusNode) {
         graphRef.value.focusNode(node.id)
       }
@@ -197,20 +230,14 @@ const handleNodeClick = (node) => {
     }
   }
 
-  // ===== 药物节点（有详情的） → 优先打开 Regimen，如果没有则打开 DetailPanel =====
+  // ===== 药物节点（有详情的） → 优先打开 Regimen（关闭 DetailPanel），如果没有则打开 DetailPanel =====
   if (node.hasDetail) {
     // 直接从 dataConfig 中查找 regimen
     const regimens = findRegimenByKey(dataConfig, node.id)
 
     if (regimens && regimens.length > 0) {
-      const regimensWithDrug = regimens.map(reg => ({
-        ...reg,
-        _drugName: node.name
-      }))
-      dialogRegimens.value = regimensWithDrug
-      if (regimensDialogRef.value) {
-        regimensDialogRef.value.open()
-      }
+      // 从图谱打开，关闭 DetailPanel
+      openRegimensFromGraph(regimens, node.name)
       if (graphRef.value && graphRef.value.focusNode) {
         graphRef.value.focusNode(node.id)
       }
