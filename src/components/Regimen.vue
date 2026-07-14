@@ -199,7 +199,6 @@ defineExpose({
 </style>
 
 <style>
-/* 全局样式 - 供 v-html 渲染的内容使用 */
 .reason-text {
   color: #909399 !important;
   font-size: 13px !important;

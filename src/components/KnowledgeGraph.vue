@@ -21,15 +21,15 @@ const graphContainer = ref(null)
 let graph = null
 let isRendering = false
 
-// 节点颜色配置（从 js 配置中读取）
+// 节点颜色配置
 const getNodeColor = (node) => {
+  if (node.type === 'attribute') return '#B39DDB'
+  if (node.hasDetail) return '#F6BD16'
   if (node.level === 1) return graphColors.level1
   if (node.level === 2) return graphColors.level2
-  // 三级：基于节点 id 使用随机颜色（同一节点颜色稳定）
   return colorPalette[getColorIndex(node.id)]
 }
 
-// 预定义颜色池
 const colorPalette = [
   '#F39C12', '#E67E22', '#F1C40F', '#2ECC71', '#1ABC9C',
   '#3498DB', '#9B59B6', '#E74C3C', '#E91E63', '#00BCD4',
@@ -38,7 +38,6 @@ const colorPalette = [
   '#FF6B6B', '#4ECDC4', '#FFE66D', '#95E77E', '#DDA0DD'
 ]
 
-// 根据字符串生成稳定的颜色索引
 const getColorIndex = (str) => {
   let hash = 0
   for (let i = 0; i < str.length; i++) {
@@ -48,11 +47,13 @@ const getColorIndex = (str) => {
   return Math.abs(hash) % colorPalette.length
 }
 
-// 节点大小配置
+// 节点大小配置（保持原有大小）
 const getNodeSize = (node) => {
+  if (node.type === 'attribute') return 32
+  if (node.hasDetail) return 58
   if (node.level === 1) return 75
   if (node.level === 2) return 58
-  return 48
+  return 45
 }
 
 // 节点样式
@@ -61,10 +62,31 @@ const getNodeStyle = (node) => {
     fill: getNodeColor(node),
     stroke: '#fff',
     lineWidth: 2.5,
-    shadowBlur: 15,
-    shadowColor: 'rgba(0,0,0,0.25)',
+    shadowBlur: 10,
+    shadowColor: 'rgba(0,0,0,0.15)',
     cursor: 'pointer',
     opacity: 0.95
+  }
+
+  if (node.type === 'attribute') {
+    return {
+      ...baseStyle,
+      stroke: '#9575CD',
+      lineWidth: 1.5,
+      shadowBlur: 5,
+      shadowColor: 'rgba(0,0,0,0.08)',
+      lineDash: [3, 3]
+    }
+  }
+
+  if (node.hasDetail) {
+    return {
+      ...baseStyle,
+      stroke: '#ffd700',
+      lineWidth: 3.5,
+      shadowBlur: 15,
+      shadowColor: 'rgba(255, 215, 0, 0.3)'
+    }
   }
 
   if (node.level === 1) {
@@ -72,8 +94,8 @@ const getNodeStyle = (node) => {
       ...baseStyle,
       stroke: '#fff',
       lineWidth: 3.5,
-      shadowBlur: 20,
-      shadowColor: 'rgba(231, 76, 60, 0.3)'
+      shadowBlur: 15,
+      shadowColor: 'rgba(231, 76, 60, 0.2)'
     }
   }
   if (node.level === 2) {
@@ -81,14 +103,13 @@ const getNodeStyle = (node) => {
       ...baseStyle,
       stroke: '#f0f0f0',
       lineWidth: 2.5,
-      shadowBlur: 12,
-      shadowColor: 'rgba(52, 152, 219, 0.25)'
+      shadowBlur: 10,
+      shadowColor: 'rgba(52, 152, 219, 0.15)'
     }
   }
   return baseStyle
 }
 
-// 聚焦某个节点（居中并高亮）
 const focusNode = (nodeId) => {
   if (!graph) return
 
@@ -115,7 +136,6 @@ const focusNode = (nodeId) => {
       return
     }
 
-    const model = node.getModel()
     const nodes = graph.getNodes()
     nodes.forEach(n => {
       graph.setItemState(n, 'highlight', false)
@@ -129,6 +149,7 @@ const focusNode = (nodeId) => {
         animate: true
       })
     } catch (e) {
+      const model = node.getModel()
       const width = graph.getWidth()
       const height = graph.getHeight()
       const group = graph.getGroup()
@@ -140,7 +161,6 @@ const focusNode = (nodeId) => {
   setTimeout(tryFocus, 300)
 }
 
-// 创建图谱实例
 const createGraph = () => {
   if (!graphContainer.value) return
 
@@ -162,18 +182,18 @@ const createGraph = () => {
     layout: {
       type: 'force',
       preventOverlap: true,
-      nodeSize: 90,
-      linkDistance: 280,
-      nodeSpacing: 150,
+      nodeSize: 60,
+      linkDistance: 250,
+      nodeSpacing: 100,
       force: {
-        repulsion: 1200,
-        gravity: 0.05,
-        edgeStrength: 0.7,
-        nodeStrength: 0.6,
-        alpha: 0.8,
-        alphaMin: 0.01,
-        alphaDecay: 0.02,
-        velocityDecay: 0.4
+        repulsion: 800,
+        gravity: 0.06,
+        edgeStrength: 0.6,
+        nodeStrength: 0.5,
+        alpha: 0.7,
+        alphaMin: 0.015,
+        alphaDecay: 0.03,
+        velocityDecay: 0.45
       }
     },
     defaultNode: {
@@ -181,37 +201,34 @@ const createGraph = () => {
       labelCfg: {
         style: {
           fill: '#2c3e50',
-          fontSize: 13,
+          fontSize: 12,
           fontWeight: 'bold',
-          fontFamily: 'Microsoft YaHei, "PingFang SC", "Helvetica Neue", Arial, sans-serif',
-          textShadow: '0 1px 1px rgba(255,255,255,0.5)'
+          fontFamily: 'Microsoft YaHei, "PingFang SC", Arial, sans-serif'
         },
         position: 'bottom',
-        offset: 10
+        offset: 8
       }
     },
     defaultEdge: {
-      type: 'quadratic',        // 贝塞尔曲线
+      type: 'quadratic',
       style: {
         stroke: '#95a5a6',
-        lineWidth: 1.8,
-        lineAppendWidth: 4
+        lineWidth: 1.5,
+        lineAppendWidth: 3
       },
       labelCfg: {
         style: {
           fill: '#7f8c8d',
-          fontSize: 10,
+          fontSize: 9,
           fontWeight: 'normal',
           background: {
-            fill: 'rgba(255,255,255,0.9)',
-            padding: [2, 6, 2, 6],
-            radius: 12,
-            shadowBlur: 4,
-            shadowColor: 'rgba(0,0,0,0.1)'
+            fill: 'rgba(255,255,255,0.85)',
+            padding: [1, 4, 1, 4],
+            radius: 8
           }
         },
         autoRotate: true,
-        offset: 15
+        offset: 10
       }
     },
     nodeStateStyles: {
@@ -235,26 +252,45 @@ const createGraph = () => {
   renderGraph()
 }
 
-// 渲染图谱（随机贝塞尔曲线）
 const renderGraph = () => {
   if (!graph || isRendering) return
 
   isRendering = true
 
   try {
-    const nodes = props.graphData.nodes.map(node => ({
-      id: node.id,
-      name: node.name,
-      type: node.type,
-      level: node.level,
-      label: node.name,
-      size: getNodeSize(node),
-      style: getNodeStyle(node)
-    }))
+    const nodes = props.graphData.nodes.map(node => {
+      const baseNode = {
+        id: node.id,
+        name: node.name,
+        type: node.type,
+        level: node.level,
+        label: node.name,
+        size: getNodeSize(node),
+        style: getNodeStyle(node),
+        hasDetail: node.hasDetail || false,
+        parentKey: node.parentKey || null,
+        fullName: node.fullName || null,
+        detailValue: node.detailValue || null
+      }
+
+      if (node.type === 'attribute') {
+        baseNode.labelCfg = {
+          style: {
+            fill: '#555',
+            fontSize: 9,
+            fontWeight: 'normal',
+            fontFamily: 'Microsoft YaHei, "PingFang SC", Arial, sans-serif'
+          },
+          position: 'bottom',
+          offset: 4
+        }
+      }
+
+      return baseNode
+    })
 
     const edges = props.graphData.edges.map(edge => {
-      // 随机弯曲幅度：-50 到 50 之间的随机数
-      const curveOffset = (Math.random() - 0.5) * 100
+      const curveOffset = (Math.random() - 0.5) * 80
 
       return {
         source: edge.source,
@@ -264,7 +300,7 @@ const renderGraph = () => {
         curveOffset: curveOffset,
         style: {
           endArrow: edge.arrow !== false ? {
-            path: G6.Arrow.triangle(8, 6, 0),
+            path: G6.Arrow.triangle(6, 4, 0),
             fill: '#95a5a6',
             stroke: '#95a5a6'
           } : false
@@ -275,22 +311,24 @@ const renderGraph = () => {
     graph.data({ nodes, edges })
     graph.render()
 
-    setTimeout(() => {
+    // 使用 requestAnimationFrame 优化布局
+    requestAnimationFrame(() => {
       try {
         graph.layout()
         setTimeout(() => {
           graph.fitView(40, undefined, undefined, [40, 40, 40, 40])
-        }, 900)
-      } catch (e) {}
-    }, 100)
+          isRendering = false
+        }, 600)
+      } catch (e) {
+        isRendering = false
+      }
+    })
   } catch (e) {
     console.error('renderGraph error:', e)
-  } finally {
     isRendering = false
   }
 }
 
-// 监听数据变化
 watch(() => props.graphData, () => {
   if (graph && !isRendering) {
     renderGraph()
@@ -336,10 +374,9 @@ defineExpose({ focusNode })
   overflow: hidden;
   touch-action: none;
   position: relative;
-  box-shadow: inset 0 0 60px rgba(44, 62, 80, 0.08), 0 4px 20px rgba(0,0,0,0.05);
+  box-shadow: inset 0 0 60px rgba(44, 62, 80, 0.06), 0 2px 12px rgba(0,0,0,0.04);
 }
 
-/* 添加装饰性网格点阵 */
 .graph-container::before {
   content: '';
   position: absolute;
@@ -348,15 +385,14 @@ defineExpose({ focusNode })
   right: 0;
   bottom: 0;
   background-image:
-      radial-gradient(circle at 25% 40%, rgba(100, 100, 120, 0.03) 2px, transparent 2px),
-      radial-gradient(circle at 75% 80%, rgba(100, 100, 120, 0.03) 1.5px, transparent 1.5px);
+      radial-gradient(circle at 25% 40%, rgba(100, 100, 120, 0.02) 2px, transparent 2px),
+      radial-gradient(circle at 75% 80%, rgba(100, 100, 120, 0.02) 1.5px, transparent 1.5px);
   background-size: 40px 40px, 25px 25px;
   pointer-events: none;
   z-index: 0;
   border-radius: 12px;
 }
 
-/* 光晕效果 */
 .graph-container::after {
   content: '';
   position: absolute;
@@ -364,7 +400,7 @@ defineExpose({ focusNode })
   left: -20%;
   width: 140%;
   height: 140%;
-  background: radial-gradient(ellipse at 30% 40%, rgba(64, 158, 255, 0.02) 0%, transparent 70%);
+  background: radial-gradient(ellipse at 30% 40%, rgba(64, 158, 255, 0.015) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }

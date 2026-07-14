@@ -74,7 +74,6 @@ const getAllMenuItems = () => {
   const traverse = (node, path = '') => {
     const currentPath = path ? `${path} > ${node.label}` : node.label
 
-    // 添加当前节点
     items.push({
       key: node.key,
       name: node.label,
@@ -82,7 +81,6 @@ const getAllMenuItems = () => {
       level: node.children ? 1 : (node.parent ? 2 : 1)
     })
 
-    // 如果节点有 regimen（化疗方案），提取方案名称和应用
     if (node.regimen && Array.isArray(node.regimen) && node.regimen.length > 0) {
       node.regimen.forEach((reg, index) => {
         if (reg.name) {
@@ -96,7 +94,6 @@ const getAllMenuItems = () => {
           })
         }
         if (reg.indication) {
-          // 将应用中的每个关键词也作为可搜索项
           const indications = reg.indication.split(/[、，,、\s]+/).filter(s => s.trim())
           indications.forEach((ind, idx) => {
             items.push({
@@ -123,7 +120,6 @@ const getAllMenuItems = () => {
 
 const allMenuItems = getAllMenuItems()
 
-// 搜索处理
 const handleSearch = () => {
   if (!searchText.value.trim()) {
     searchResults.value = []
@@ -135,11 +131,9 @@ const handleSearch = () => {
   )
 }
 
-// 点击搜索结果
 const handleResultClick = (item) => {
   searchText.value = ''
   searchResults.value = []
-  // 如果是 regimen 或 indication，跳转到父菜单
   if (item.isRegimen || item.isIndication) {
     handleItemClick(item.parentKey)
   } else {
@@ -147,7 +141,6 @@ const handleResultClick = (item) => {
   }
 }
 
-// 递归过滤菜单（只显示匹配的项）
 const filteredMenuConfig = computed(() => {
   if (!searchText.value) return dataConfig
 
@@ -181,7 +174,6 @@ const handleItemClick = (key) => {
 </script>
 
 <style scoped>
-/* ... 样式保持不变 ... */
 .menu-panel {
   height: 100%;
   display: flex;
@@ -204,7 +196,6 @@ const handleItemClick = (key) => {
   height: 100%;
 }
 
-/* 搜索结果下拉框 */
 .search-results {
   position: absolute;
   top: 100%;
@@ -251,7 +242,6 @@ const handleItemClick = (key) => {
   margin-top: 2px;
 }
 
-/* 一级菜单样式 */
 :deep(.el-sub-menu .el-sub-menu__title) {
   padding-left: 16px !important;
   font-weight: bold;
@@ -267,7 +257,6 @@ const handleItemClick = (key) => {
   line-height: 44px !important;
 }
 
-/* 二级菜单样式 */
 :deep(.el-menu--inline .el-menu-item) {
   padding-left: 32px !important;
   font-weight: normal;
@@ -275,7 +264,6 @@ const handleItemClick = (key) => {
   line-height: 38px !important;
 }
 
-/* 三级菜单样式 */
 :deep(.el-menu--inline .el-sub-menu .el-sub-menu__title) {
   padding-left: 32px !important;
   font-weight: normal;

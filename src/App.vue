@@ -81,26 +81,33 @@ const handleOpenRegimens = (regimens) => {
 
 // 点击图谱节点
 const handleNodeClick = (node) => {
-  // 检查节点对应的菜单项是否有 content 数据
-  const content = getMenuContentByKey(node.id)
-
-  if (!content) {
-    // 没有 content，关闭右侧详情，只聚焦节点
-    selectedMenuKey.value = null  // 清空右侧详情
-    if (isMobile.value) {
-      rightOpen.value = false  // 手机端关闭右侧面板
-    }
-    if (graphRef.value && graphRef.value.focusNode) {
-      graphRef.value.focusNode(node.id)
-    }
-    return
+  // 如果是属性节点，找到其父节点（药物节点）
+  let targetId = node.id
+  if (node.type === 'attribute' && node.parentKey) {
+    targetId = node.parentKey
   }
 
-  // 有 content，正常显示右侧详情
-  selectedMenuKey.value = node.id
-  if (isMobile.value) {
-    rightOpen.value = true
-    leftOpen.value = false
+  // 检查目标节点是否有 content 数据
+  const content = getMenuContentByKey(targetId)
+
+  if (content || node.hasDetail) {
+    selectedMenuKey.value = targetId
+    if (isMobile.value) {
+      rightOpen.value = true
+      leftOpen.value = false
+    }
+    // 聚焦图谱中的对应节点
+    if (graphRef.value && graphRef.value.focusNode) {
+      graphRef.value.focusNode(targetId)
+    }
+  } else {
+    selectedMenuKey.value = null
+    if (isMobile.value) {
+      rightOpen.value = false
+    }
+    if (graphRef.value && graphRef.value.focusNode) {
+      graphRef.value.focusNode(targetId)
+    }
   }
 }
 
@@ -117,9 +124,9 @@ const handleSelectMenuItem = (menuKey) => {
 
   if (!content) {
     // 没有 content 数据，清空右侧详情，只聚焦图谱节点
-    selectedMenuKey.value = null  // 清空右侧详情
+    selectedMenuKey.value = null
     if (isMobile.value) {
-      rightOpen.value = false  // 手机端关闭右侧面板
+      rightOpen.value = false
     }
     if (graphRef.value && graphRef.value.focusNode) {
       graphRef.value.focusNode(menuKey)
@@ -236,7 +243,7 @@ body {
     box-shadow: 2px 0 8px rgba(0,0,0,0.15);
     transform: translateX(-100%);
     transition: transform 0.3s ease;
-    overflow-y: auto !important;  /* 移动端需要滚动 */
+    overflow-y: auto !important;
   }
   .left-aside.mobile-open {
     transform: translateX(0);
@@ -252,7 +259,7 @@ body {
     box-shadow: -2px 0 8px rgba(0,0,0,0.15);
     transform: translateX(100%);
     transition: transform 0.3s ease;
-    overflow-y: auto !important;  /* 移动端需要滚动 */
+    overflow-y: auto !important;
   }
   .right-aside.mobile-open {
     transform: translateX(0);

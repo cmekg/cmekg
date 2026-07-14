@@ -1340,30 +1340,71 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
     const edges = []
 
     for (const item of items) {
+        const isDrugDetail = !!(item.content && item.content.type === 'drugDetail')
+        const currentNodeId = item.key
+
         // 添加当前节点
-        const nodeType = level === 3 ? "drug" : "menu"
+        const nodeType = isDrugDetail ? 'drug' : 'menu'
         nodes.push({
-            id: item.key,
+            id: currentNodeId,
             name: item.label,
             type: nodeType,
-            level: level
+            level: level,
+            hasDetail: isDrugDetail
         })
 
-        // 如果有父节点，添加边
         if (parentId) {
             edges.push({
                 source: parentId,
-                target: item.key,
+                target: currentNodeId,
                 label: "",
-                arrow: true  // 有箭头
+                arrow: true
             })
+        }
+
+        // 如果当前节点有 drugDetail，展开 detail 中的每个属性作为子节点
+        if (isDrugDetail && item.content.detail) {
+            const detail = item.content.detail
+            for (const [key, value] of Object.entries(detail)) {
+                // 跳过空值
+                if (!value || value === '' || value === '/') continue
+
+                // 生成属性节点ID
+                const attrId = `${currentNodeId}-attr-${key.replace(/[（]/g, '-').replace(/[）]/g, '-').replace(/[（）]/g, '-')}`
+
+                // 截取属性值（如果太长则截断）
+                let displayValue = value
+                if (displayValue.length > 20) {
+                    displayValue = displayValue.substring(0, 18) + '...'
+                }
+                // 属性节点名称显示为 "属性名：属性值"
+                const attrName = `${key}：${displayValue}`
+
+                nodes.push({
+                    id: attrId,
+                    name: attrName,
+                    type: 'attribute',
+                    level: 4,
+                    parentKey: currentNodeId,
+                    fullName: key,
+                    detailValue: value,
+                    hasDetail: false
+                })
+
+                edges.push({
+                    source: currentNodeId,
+                    target: attrId,
+                    label: "",
+                    arrow: true
+                })
+            }
         }
 
         // 递归处理子节点
         if (item.children && item.children.length > 0) {
             const { nodes: childNodes, edges: childEdges } = generateGraphNodes(
                 item.children,
-                item.key,
+                currentNodeId,
                 level + 1
             )
             nodes.push(...childNodes)

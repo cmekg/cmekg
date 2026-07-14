@@ -68,7 +68,6 @@ const currentRegimens = ref([])
 const isConcentrationAndAbnormal = (key, value) => {
   if (key !== '浓度（mg/ml）') return false
   if (!value) return false
-  // 只要不是 "/" 就标红（包括空字符串也标红）
   return value !== '/'
 }
 
@@ -199,7 +198,6 @@ watch(() => props.menuKey, (newKey) => {
   word-break: break-word;
 }
 
-/* 异常值高亮 - 红色 */
 .detail-value.highlight-danger {
   color: #f56c6c !important;
   font-weight: bold;
