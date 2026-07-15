@@ -67,9 +67,6 @@ const leftOpen = ref(false)
 const rightOpen = ref(false)
 const isMobile = ref(window.innerWidth <= 768)
 
-// 标记是否从 DetailPanel 打开 Regimen
-const isFromDetailPanel = ref(false)
-
 const leftWidth = computed(() => isMobile.value ? '0px' : '280px')
 const rightWidth = computed(() => {
   if (!selectedMenuKey.value) return '0px'
@@ -101,7 +98,6 @@ const openRegimensDialog = (regimens, drugName = '', closeDetail = false) => {
 
 // 从 DetailPanel 打开 Regimen（保留 DetailPanel）
 const handleOpenRegimensFromDetail = (regimens) => {
-  isFromDetailPanel.value = true
   // 从 DetailPanel 打开时，尝试获取当前药物名称
   let drugName = ''
   if (selectedMenuKey.value) {
@@ -113,7 +109,6 @@ const handleOpenRegimensFromDetail = (regimens) => {
 
 // 从图谱打开 Regimen（关闭 DetailPanel）
 const openRegimensFromGraph = (regimens, drugName = '') => {
-  isFromDetailPanel.value = false
   openRegimensDialog(regimens, drugName, true)
 }
 

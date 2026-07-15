@@ -31,6 +31,7 @@ const getNodeColor = (node) => {
   if (node.hasDetail) return '#F6BD16'
   if (node.level === 1) return graphColors.level1
   if (node.level === 2) return graphColors.level2
+  if (node.level === 3) return graphColors.level3
   return colorPalette[getColorIndex(node.id)]
 }
 
@@ -62,41 +63,32 @@ const getNodeSize = (node) => {
   return 42
 }
 
-// 节点样式（减少阴影提高性能）
+// 节点样式（已移除阴影以提升 canvas 性能）
 const getNodeStyle = (node) => {
   const baseStyle = {
     fill: getNodeColor(node),
     stroke: '#fff',
     lineWidth: 2,
-    shadowBlur: 4,
-    shadowColor: 'rgba(0,0,0,0.10)',
-    cursor: 'pointer',
-    opacity: 0.95
+    cursor: 'pointer'
   }
 
   if (node.type === 'regimen') {
-    return {
-      ...baseStyle,
-      stroke: '#8E44AD',
-      lineWidth: 2.5,
-      shadowBlur: 8,
-      shadowColor: 'rgba(155, 89, 182, 0.3)'
-    }
+    return { ...baseStyle, stroke: '#8E44AD', lineWidth: 2.5 }
   }
   if (node.type === 'regimenField') {
-    return { ...baseStyle, stroke: '#FF8C00', lineWidth: 1, shadowBlur: 2, lineDash: [2, 2] }
+    return { ...baseStyle, stroke: '#FF8C00', lineWidth: 1, lineDash: [2, 2] }
   }
   if (node.type === 'attribute') {
-    return { ...baseStyle, stroke: '#9575CD', lineWidth: 1, shadowBlur: 2, lineDash: [3, 3] }
+    return { ...baseStyle, stroke: '#9575CD', lineWidth: 1, lineDash: [3, 3] }
   }
   if (node.hasDetail) {
-    return { ...baseStyle, stroke: '#ffd700', lineWidth: 3, shadowBlur: 8, shadowColor: 'rgba(255, 215, 0, 0.2)' }
+    return { ...baseStyle, stroke: '#ffd700', lineWidth: 3 }
   }
   if (node.level === 1) {
-    return { ...baseStyle, stroke: '#fff', lineWidth: 3, shadowBlur: 8, shadowColor: 'rgba(231, 76, 60, 0.12)' }
+    return { ...baseStyle, stroke: '#fff', lineWidth: 3 }
   }
   if (node.level === 2) {
-    return { ...baseStyle, stroke: '#f0f0f0', lineWidth: 2, shadowBlur: 4, shadowColor: 'rgba(52, 152, 219, 0.10)' }
+    return { ...baseStyle, stroke: '#f0f0f0', lineWidth: 2 }
   }
   return baseStyle
 }
@@ -145,14 +137,14 @@ const createGraph = () => {
       linkDistance: 180,
       nodeSpacing: 70,
       force: {
-        repulsion: 500,
-        gravity: 0.08,
+        repulsion: 300,
+        gravity: 0.1,
         edgeStrength: 0.5,
         nodeStrength: 0.4,
-        alpha: 0.5,
-        alphaMin: 0.02,
-        alphaDecay: 0.05,
-        velocityDecay: 0.5
+        alpha: 0.3,
+        alphaMin: 0.01,
+        alphaDecay: 0.1,
+        velocityDecay: 0.6
       }
     },
     defaultNode: {
@@ -169,10 +161,10 @@ const createGraph = () => {
       }
     },
     defaultEdge: {
-      type: 'quadratic',
+      type: 'line',
       style: {
         stroke: '#95a5a6',
-        lineWidth: 1.2,
+        lineWidth: 1,
         lineAppendWidth: 2
       },
       labelCfg: {
@@ -186,7 +178,6 @@ const createGraph = () => {
             radius: 4
           }
         },
-        autoRotate: true,
         offset: 8
       }
     },
@@ -194,9 +185,7 @@ const createGraph = () => {
       highlight: {
         stroke: '#e74c3c',
         lineWidth: 4,
-        shadowBlur: 20,
-        shadowColor: '#e74c3c',
-        fill: '#ff8a8a'
+        fill: '#ffcccc'
       }
     },
     minZoom: 0.3,
@@ -273,8 +262,6 @@ const renderGraph = () => {
       source: edge.source,
       target: edge.target,
       label: edge.label || '',
-      type: 'quadratic',
-      curveOffset: (Math.random() - 0.5) * 60,
       style: {
         endArrow: edge.arrow !== false ? {
           path: G6.Arrow.triangle(5, 3, 0),
@@ -287,19 +274,18 @@ const renderGraph = () => {
     graph.data({ nodes, edges })
     graph.render()
 
-    // 延迟执行布局，避免阻塞渲染
+    // 等布局稳定后再 fitView
     clearTimeout(renderTimer)
     renderTimer = setTimeout(() => {
       try {
-        graph.layout()
-        setTimeout(() => {
+        if (graph && !graph.destroyed) {
           graph.fitView(30, undefined, undefined, [30, 30, 30, 30])
-          isRendering = false
-        }, 400)
+        }
       } catch (e) {
+      } finally {
         isRendering = false
       }
-    }, 50)
+    }, 500)
   } catch (e) {
     console.error('renderGraph error:', e)
     isRendering = false

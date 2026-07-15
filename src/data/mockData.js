@@ -1380,7 +1380,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                 // 清洗 value：去掉 span 标签
                 const cleanValue = cleanHtmlTags(value)
 
-                const attrId = `${currentNodeId}-attr-${key.replace(/[（]/g, '-').replace(/[）]/g, '-').replace(/[（）]/g, '-')}`
+                const attrId = `${currentNodeId}-attr-${key.replace(/[（]/g, '-').replace(/[）]/g, '-')}`
                 let displayValue = cleanValue
                 if (displayValue.length > 20) {
                     displayValue = displayValue.substring(0, 18) + '...'
@@ -1440,7 +1440,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                         type: 'regimenField',
                         level: 4,
                         parentKey: regimenId,
-                        regimenParentKey: currentNodeId,
+                        regimenParentKey: regimenId,
                         fieldKey: '应用',
                         fieldValue: reg.indication,
                         hasDetail: false,
@@ -1455,7 +1455,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                     })
 
                     // 应用的具体值拆分为子节点
-                    const indications = reg.indication.split(/[、，,、\s]+/).filter(s => s.trim())
+                    const indications = reg.indication.split(/[、，,\s]+/).filter(s => s.trim())
                     indications.forEach((ind, idx) => {
                         const indId = `${indicationId}-value-${idx}`
                         nodes.push({
@@ -1464,7 +1464,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                             type: 'regimenField',
                             level: 5,
                             parentKey: indicationId,
-                            regimenParentKey: currentNodeId,
+                            regimenParentKey: regimenId,
                             fieldKey: '应用',
                             fieldValue: ind.trim(),
                             hasDetail: false,
@@ -1488,7 +1488,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                         type: 'regimenField',
                         level: 4,
                         parentKey: regimenId,
-                        regimenParentKey: currentNodeId,
+                        regimenParentKey: regimenId,
                         fieldKey: '化疗药物',
                         fieldValue: reg.drugs,
                         hasDetail: false,
@@ -1502,7 +1502,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                         arrow: true
                     })
 
-                    const drugList = reg.drugs.split(/[、，,、\s]+/).filter(s => s.trim())
+                    const drugList = reg.drugs.split(/[、，,\s]+/).filter(s => s.trim())
                     drugList.forEach((drug, idx) => {
                         const drugId = `${drugsId}-value-${idx}`
                         nodes.push({
@@ -1511,7 +1511,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                             type: 'regimenField',
                             level: 5,
                             parentKey: drugsId,
-                            regimenParentKey: currentNodeId,
+                            regimenParentKey: regimenId,
                             fieldKey: '化疗药物',
                             fieldValue: drug.trim(),
                             hasDetail: false,
@@ -1535,7 +1535,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                         type: 'regimenField',
                         level: 4,
                         parentKey: regimenId,
-                        regimenParentKey: currentNodeId,
+                        regimenParentKey: regimenId,
                         fieldKey: '预处理',
                         fieldValue: Object.keys(reg.pretreatment).join('、'),
                         hasDetail: false,
@@ -1559,7 +1559,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                             type: 'regimenField',
                             level: 5,
                             parentKey: pretreatmentId,
-                            regimenParentKey: currentNodeId,
+                            regimenParentKey: regimenId,
                             fieldKey: '预处理',
                             fieldValue: category,
                             hasDetail: false,
@@ -1577,7 +1577,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                         if (typeof value === 'string') {
                             items = value.split(/<br>/).filter(s => s.trim())
                             if (items.length <= 1) {
-                                items = value.split(/(?=②|③|④|⑤)/).filter(s => s.trim())
+                                items = value.split(/(?=[①-⑤])/).filter(s => s.trim())
                             }
                         }
                         items.forEach((item, idx) => {
@@ -1591,7 +1591,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                                 type: 'regimenField',
                                 level: 6,
                                 parentKey: categoryId,
-                                regimenParentKey: currentNodeId,
+                                regimenParentKey: regimenId,
                                 fieldKey: category,
                                 fieldValue: cleanItem,
                                 hasDetail: false,
@@ -1616,7 +1616,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                         type: 'regimenField',
                         level: 4,
                         parentKey: regimenId,
-                        regimenParentKey: currentNodeId,
+                        regimenParentKey: regimenId,
                         fieldKey: '用药顺序',
                         fieldValue: reg.usage,
                         hasDetail: false,
@@ -1640,7 +1640,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                                 type: 'regimenField',
                                 level: 5,
                                 parentKey: usageId,
-                                regimenParentKey: currentNodeId,
+                                regimenParentKey: regimenId,
                                 fieldKey: '用药顺序',
                                 fieldValue: step.trim(),
                                 hasDetail: false,
@@ -1670,7 +1670,7 @@ const generateGraphNodes = (items, parentId = null, level = 1) => {
                             type: 'regimenField',
                             level: 5,
                             parentKey: usageId,
-                            regimenParentKey: currentNodeId,
+                            regimenParentKey: regimenId,
                             fieldKey: '用药顺序',
                             fieldValue: reg.usage.trim(),
                             hasDetail: false,
